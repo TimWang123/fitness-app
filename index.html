@@ -286,13 +286,23 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  transition: background 0.5s;
   padding: 20px;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
 }
 .workout-screen.active { display: flex; }
-.workout-screen.exercise-phase { background: linear-gradient(135deg, #FF6B35, #FF1744); }
-.workout-screen.rest-phase { background: linear-gradient(135deg, #00D4AA, #0088ff); }
-.workout-screen.warmup-phase { background: linear-gradient(135deg, #7C4DFF, #E040FB); }
+
+/* Dual-layer color transition system */
+.workout-bg-layer {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+.workout-bg-layer.bg-current { opacity: 1; }
+.workout-bg-layer.bg-next { opacity: 0; }
+
+.workout-screen > *:not(.workout-bg-layer) { position: relative; z-index: 1; }
+
 .workout-screen.done-phase { background: linear-gradient(135deg, #00E676, #00BFA5); }
 
 .workout-progress-bar {
@@ -694,6 +704,8 @@ body {
 
 <!-- Workout Screen (Full Screen Overlay) -->
 <div class="workout-screen" id="workoutScreen">
+  <div class="workout-bg-layer bg-current" id="bgCurrent"></div>
+  <div class="workout-bg-layer bg-next" id="bgNext"></div>
   <div class="workout-progress-bar" id="workoutProgressBar"></div>
   <div class="workout-counter" id="workoutCounter">1 / 5</div>
   <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊 提示音</button>
@@ -1167,6 +1179,14 @@ function startWorkout(planIndex) {
   document.getElementById('mainNav').style.display = 'none';
   document.getElementById('workoutScreen').classList.add('active');
 
+  // Initialize background layers
+  const bgCurrent = document.getElementById('bgCurrent');
+  const bgNext = document.getElementById('bgNext');
+  bgCurrent.style.background = 'linear-gradient(135deg, #1a1a2e, #16213e)';
+  bgCurrent.className = 'workout-bg-layer bg-current';
+  bgNext.style.background = '';
+  bgNext.className = 'workout-bg-layer bg-next';
+
   audioCtx.resume();
   loadStep(0);
 }
@@ -1180,13 +1200,49 @@ function loadStep(index) {
   const step = currentWorkout.steps[index];
   const screen = document.getElementById('workoutScreen');
 
-  // Phase styling
+  // Phase styling with smooth color transition
   screen.className = 'workout-screen active';
+  const EXERCISE_COLORS = [
+    'linear-gradient(135deg, #FF6B35, #FF1744)',
+    'linear-gradient(135deg, #7C4DFF, #E040FB)',
+    'linear-gradient(135deg, #FF4081, #F50057)',
+    'linear-gradient(135deg, #FF9100, #FF6D00)',
+    'linear-gradient(135deg, #D500F9, #6200EA)',
+    'linear-gradient(135deg, #FF3D00, #DD2C00)',
+    'linear-gradient(135deg, #C51162, #880E4F)',
+    'linear-gradient(135deg, #AA00FF, #304FFE)',
+    'linear-gradient(135deg, #F4511E, #E65100)',
+    'linear-gradient(135deg, #E91E63, #9C27B0)',
+  ];
+  const REST_COLOR = 'linear-gradient(135deg, #00D4AA, #0088ff)';
+
+  // Determine the target background color
+  let targetBg;
   if (step.type === 'exercise') {
-    screen.classList.add('exercise-phase');
+    // Find which exercise index this is (by unique name)
+    const uniqueNames = [...new Set(currentWorkout.steps.filter(s => s.type === 'exercise').map(s => s.name))];
+    const exIdx = uniqueNames.indexOf(step.name);
+    targetBg = EXERCISE_COLORS[exIdx % EXERCISE_COLORS.length];
   } else {
-    screen.classList.add('rest-phase');
+    targetBg = REST_COLOR;
   }
+
+  // Dual-layer crossfade transition
+  const bgCurrent = document.getElementById('bgCurrent');
+  const bgNext = document.getElementById('bgNext');
+  bgNext.style.background = targetBg;
+  bgNext.classList.add('bg-current');
+  bgNext.classList.remove('bg-next');
+  bgCurrent.classList.add('bg-next');
+  bgCurrent.classList.remove('bg-current');
+  // After transition completes, swap layers for next transition
+  setTimeout(() => {
+    bgCurrent.style.background = targetBg;
+    bgCurrent.classList.add('bg-current');
+    bgCurrent.classList.remove('bg-next');
+    bgNext.classList.add('bg-next');
+    bgNext.classList.remove('bg-current');
+  }, 850);
 
   // Progress
   const progress = ((index + 1) / currentWorkout.steps.length) * 100;
