@@ -41,12 +41,14 @@ body {
 
 /* ===== Navigation ===== */
 .nav {
-  background: var(--darker);
+  background: rgba(22,33,62,0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   padding: 12px 20px;
   display: flex;
   align-items: center;
-  gap: 20px;
-  border-bottom: 2px solid var(--primary);
+  gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -61,18 +63,26 @@ body {
 }
 .nav-links { display: flex; gap: 8px; margin-left: auto; }
 .nav-link {
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: 8px 14px;
+  border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 0.9em;
-  transition: all 0.2s;
-  border: none;
+  font-size: 0.85em;
+  transition: all 0.3s;
+  border: 1px solid transparent;
   background: transparent;
   color: var(--text-dim);
+  white-space: nowrap;
 }
-.nav-link:hover { background: var(--card); color: var(--text); }
-.nav-link.active { background: var(--primary); color: white; }
+.nav-link:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+.nav-link.active {
+  background: rgba(255,107,53,0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: white;
+  border-color: rgba(255,255,255,0.15);
+  box-shadow: 0 2px 12px rgba(255,107,53,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+}
 
 /* ===== Pages ===== */
 .page { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
@@ -99,62 +109,100 @@ body {
   margin: 0 auto;
 }
 .action-card {
-  background: var(--card);
-  border-radius: 16px;
-  padding: 30px 20px;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-radius: 20px;
+  padding: 28px 18px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.3s;
-  border: 2px solid transparent;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+  position: relative;
+  overflow: hidden;
 }
-.action-card:hover { transform: translateY(-4px); }
-.action-card:nth-child(1):hover { border-color: var(--primary); }
-.action-card:nth-child(2):hover { border-color: var(--secondary); }
-.action-card:nth-child(3):hover { border-color: var(--accent); }
+.action-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 100%);
+  border-radius: 20px 20px 0 0;
+  pointer-events: none;
+}
+.action-card:hover { transform: translateY(-4px); box-shadow: 0 8px 40px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.15); }
+.action-card:active { transform: scale(0.97); }
+.action-card:nth-child(1):hover { border-color: rgba(255,107,53,0.5); background: rgba(255,107,53,0.1); }
+.action-card:nth-child(2):hover { border-color: rgba(0,212,170,0.5); background: rgba(0,212,170,0.1); }
+.action-card:nth-child(3):hover { border-color: rgba(124,77,255,0.5); background: rgba(124,77,255,0.1); }
 .action-card .icon { font-size: 3em; margin-bottom: 12px; }
-.action-card h3 { margin-bottom: 8px; font-size: 1.2em; }
+.action-card h3 { margin-bottom: 8px; font-size: 1.1em; }
 .action-card p { color: var(--text-dim); font-size: 0.85em; }
 
 /* ===== Plan Cards ===== */
 .plan-list { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
 .plan-card {
-  background: var(--card);
-  border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border-radius: 16px;
   padding: 16px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   cursor: pointer;
-  transition: all 0.2s;
-  border: 2px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.08);
 }
-.plan-card:hover { border-color: var(--primary); transform: translateX(4px); }
+.plan-card:hover { border-color: rgba(255,107,53,0.4); background: rgba(255,255,255,0.1); transform: translateX(4px); }
 .plan-info h3 { font-size: 1.1em; margin-bottom: 4px; }
 .plan-info p { color: var(--text-dim); font-size: 0.85em; }
 .plan-actions { display: flex; gap: 8px; }
 
-/* ===== Buttons ===== */
+/* ===== Liquid Glass Buttons ===== */
 .btn {
   padding: 10px 20px;
-  border-radius: 10px;
-  border: none;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.18);
   font-weight: 700;
   font-size: 0.95em;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  position: relative;
+  overflow: hidden;
 }
-.btn-primary { background: var(--primary); color: white; }
-.btn-primary:hover { background: #e55a2b; }
-.btn-secondary { background: var(--secondary); color: var(--dark); }
-.btn-secondary:hover { background: #00b894; }
-.btn-accent { background: var(--accent); color: white; }
-.btn-accent:hover { background: #6a3de8; }
-.btn-danger { background: var(--danger); color: white; }
-.btn-danger:hover { background: #d50032; }
-.btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--text-dim); }
-.btn-ghost:hover { color: white; border-color: white; }
-.btn-sm { padding: 6px 12px; font-size: 0.8em; }
-.btn-lg { padding: 14px 28px; font-size: 1.1em; }
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 100%);
+  border-radius: 14px 14px 0 0;
+  pointer-events: none;
+}
+.btn:active { transform: scale(0.96); }
+.btn-primary { background: rgba(255,107,53,0.55); color: white; box-shadow: 0 4px 24px rgba(255,107,53,0.3), inset 0 1px 0 rgba(255,255,255,0.2); }
+.btn-primary:hover { background: rgba(255,107,53,0.7); box-shadow: 0 6px 32px rgba(255,107,53,0.4), inset 0 1px 0 rgba(255,255,255,0.25); }
+.btn-secondary { background: rgba(0,212,170,0.45); color: white; box-shadow: 0 4px 24px rgba(0,212,170,0.25), inset 0 1px 0 rgba(255,255,255,0.2); }
+.btn-secondary:hover { background: rgba(0,212,170,0.6); }
+.btn-accent { background: rgba(124,77,255,0.5); color: white; box-shadow: 0 4px 24px rgba(124,77,255,0.3), inset 0 1px 0 rgba(255,255,255,0.2); }
+.btn-accent:hover { background: rgba(124,77,255,0.65); box-shadow: 0 6px 32px rgba(124,77,255,0.4), inset 0 1px 0 rgba(255,255,255,0.25); }
+.btn-danger { background: rgba(255,23,68,0.5); color: white; box-shadow: 0 4px 24px rgba(255,23,68,0.25), inset 0 1px 0 rgba(255,255,255,0.2); }
+.btn-danger:hover { background: rgba(255,23,68,0.65); }
+.btn-ghost {
+  background: rgba(255,255,255,0.08);
+  color: var(--text-dim);
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.15); color: white; border-color: rgba(255,255,255,0.3); }
+.btn-sm { padding: 6px 12px; font-size: 0.8em; border-radius: 10px; }
+.btn-lg { padding: 14px 28px; font-size: 1.1em; border-radius: 16px; }
 
 /* ===== Forms ===== */
 .form-group { margin-bottom: 16px; }
@@ -252,9 +300,13 @@ body {
 
 /* ===== Body Info Form ===== */
 .body-form {
-  background: var(--card);
-  border-radius: 16px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
   padding: 24px;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.08);
 }
 .goal-options {
   display: grid;
@@ -377,49 +429,74 @@ body {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.5);
-  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
   color: white;
   font-size: 1.4em;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
 }
-.workout-btn:hover { background: rgba(255,255,255,0.3); }
+.workout-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+  border-radius: 50% 50% 0 0;
+  pointer-events: none;
+}
+.workout-btn:hover { background: rgba(255,255,255,0.22); box-shadow: 0 6px 28px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.25); }
+.workout-btn:active { transform: scale(0.92); }
 .workout-btn.main {
   width: 76px;
   height: 76px;
   font-size: 1.8em;
-  background: rgba(255,255,255,0.25);
-  border-color: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.35);
+  box-shadow: 0 6px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.1);
 }
 
 .workout-exit {
   position: absolute;
   top: 16px;
   right: 16px;
-  background: rgba(0,0,0,0.3);
-  border: none;
+  background: rgba(0,0,0,0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.15);
   color: white;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 0.9em;
   font-weight: 600;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+  transition: all 0.2s;
 }
-.workout-exit:hover { background: rgba(0,0,0,0.5); }
+.workout-exit:hover { background: rgba(0,0,0,0.35); }
+.workout-exit:active { transform: scale(0.95); }
 
 .workout-counter {
   position: absolute;
   top: 16px;
   left: 16px;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: 12px;
   font-weight: 600;
   font-size: 0.9em;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
 /* ===== Completion Screen ===== */
@@ -441,37 +518,93 @@ body {
 .tabs {
   display: flex;
   gap: 4px;
-  background: var(--darker);
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   padding: 4px;
-  border-radius: 10px;
+  border-radius: 14px;
   margin-bottom: 20px;
+  border: 1px solid rgba(255,255,255,0.08);
 }
 .tab {
   flex: 1;
-  padding: 10px;
+  padding: 10px 8px;
   text-align: center;
-  border-radius: 8px;
+  border-radius: 11px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 0.9em;
-  transition: all 0.2s;
+  font-size: 0.85em;
+  transition: all 0.3s;
   border: none;
   background: transparent;
   color: var(--text-dim);
 }
-.tab.active { background: var(--primary); color: white; }
-.tab:hover:not(.active) { color: white; }
+.tab.active {
+  background: rgba(255,107,53,0.5);
+  color: white;
+  box-shadow: 0 2px 12px rgba(255,107,53,0.3), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+.tab:hover:not(.active) { color: white; background: rgba(255,255,255,0.06); }
 .tab-content { display: none; }
 .tab-content.active { display: block; }
 
 /* ===== Responsive ===== */
 @media (max-width: 600px) {
-  .workout-exercise-name { font-size: 2em; }
-  .workout-timer { font-size: 5em; }
-  .form-row { grid-template-columns: 1fr; }
-  .hero h1 { font-size: 2em; }
-  .completion-stats { grid-template-columns: 1fr; }
+  .nav { padding: 10px 12px; gap: 8px; }
+  .nav-brand { font-size: 1.1em; white-space: nowrap; }
+  .nav-links { gap: 4px; }
+  .nav-link { padding: 7px 10px; font-size: 0.8em; }
   .nav-link span.label-text { display: none; }
+
+  .page { padding: 16px 12px; }
+  .hero { padding: 30px 10px; }
+  .hero h1 { font-size: 2em; }
+  .hero p { font-size: 0.95em; margin-bottom: 24px; }
+  .action-cards { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .action-card { padding: 20px 12px; }
+  .action-card .icon { font-size: 2.2em; margin-bottom: 8px; }
+  .action-card h3 { font-size: 0.95em; }
+  .action-card p { font-size: 0.75em; }
+
+  .plan-card { flex-direction: column; align-items: stretch; gap: 10px; padding: 14px 16px; }
+  .plan-actions { justify-content: flex-end; }
+
+  .form-row { grid-template-columns: 1fr; }
+  .goal-options { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .goal-option { padding: 10px 6px; }
+  .goal-option .goal-icon { font-size: 1.4em; }
+  .goal-option .goal-name { font-size: 0.75em; }
+
+  .exercise-item { flex-wrap: wrap; padding: 12px; gap: 8px; }
+  .exercise-item .details > div { flex-wrap: wrap; gap: 6px !important; }
+  .exercise-item .details label { font-size: 0.7em !important; }
+  .exercise-item .details label input { width: 45px !important; }
+
+  .tabs { border-radius: 12px; }
+  .tab { padding: 9px 6px; font-size: 0.8em; }
+
+  .workout-screen { padding: 16px 12px; }
+  .workout-exercise-name { font-size: 1.8em; }
+  .workout-exercise-detail { font-size: 1em; margin-bottom: 20px; }
+  .workout-timer { font-size: 4.5em; margin-bottom: 6px; }
+  .workout-set-info { font-size: 1.1em; margin-bottom: 20px; }
+  .workout-next { font-size: 0.85em; margin-bottom: 16px; }
+  .workout-controls { gap: 12px; }
+  .workout-btn { width: 48px; height: 48px; font-size: 1.2em; }
+  .workout-btn.main { width: 64px; height: 64px; font-size: 1.5em; }
+  .workout-counter, .workout-exit, .sound-toggle { font-size: 0.75em; padding: 6px 10px; top: 12px; }
+  .workout-counter { left: 8px; }
+  .workout-exit { right: 8px; }
+
+  .completion-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stat-item { padding: 12px 8px; }
+  .stat-value { font-size: 1.5em; }
+  .stat-label { font-size: 0.7em; }
+
+  .section-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+
+  .import-area { padding: 16px; }
+  .import-area textarea { min-height: 150px; font-size: 0.8em; }
 }
 
 /* ===== Animations ===== */
@@ -493,14 +626,19 @@ body {
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0,0,0,0.3);
-  border: none;
+  background: rgba(0,0,0,0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
   color: white;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 0.9em;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+  transition: all 0.2s;
 }
+.sound-toggle:active { transform: translateX(-50%) scale(0.95); }
 
 /* ===== Modal ===== */
 .modal-overlay {
@@ -514,13 +652,17 @@ body {
 }
 .modal-overlay.active { display: flex; }
 .modal {
-  background: var(--card);
-  border-radius: 16px;
+  background: rgba(30,42,74,0.85);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-radius: 20px;
   padding: 30px;
   max-width: 500px;
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 16px 64px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
 }
 .modal h3 { margin-bottom: 16px; font-size: 1.3em; }
 </style>
@@ -613,13 +755,15 @@ body {
   <!-- Import -->
   <div class="tab-content" id="tab-import">
     <div class="import-area">
-      <p style="margin-bottom:12px;font-weight:600">粘贴你的健身计划</p>
-      <textarea id="importText" placeholder="示例格式：&#10;深蹲 4组 12次 60秒&#10;休息 90秒&#10;卧推 4组 10次 60秒&#10;休息 90秒&#10;引体向上 3组 8次 45秒"></textarea>
+      <p style="margin-bottom:12px;font-weight:600">粘贴你的健身计划（支持各种格式）</p>
+      <textarea id="importText" placeholder="直接粘贴你的健身计划，支持各种格式，例如：&#10;&#10;背部 (25min)&#10;1. 哑铃单臂划船 — 4组 × 10-12次/侧，组休90秒&#10;2. 高位下拉（宽握） — 3组 × 12次，组休75秒&#10;&#10;核心 (8min)&#10;1. 悬垂举腿 — 3组 × 10-12次，组休45秒&#10;&#10;收尾有氧 (15min) 椭圆机"></textarea>
       <div class="import-format">
-        <p><strong>支持格式：</strong></p>
-        <p><code>动作名称 组数组 次数次 每组时长秒</code></p>
-        <p><code>休息 时长秒</code></p>
-        <p>例如：<code>深蹲 4组 12次 60秒</code> 或 <code>休息 90秒</code></p>
+        <p><strong>智能识别以下格式：</strong></p>
+        <p><code>动作名 — 4组 × 12次，组休60秒</code></p>
+        <p><code>动作名 3组 10次 45秒</code></p>
+        <p><code>椭圆机5分钟</code> <code>肩胛骨绕环10次</code></p>
+        <p>分区标题如 <code>背部 (25min)</code> 会自动跳过</p>
+        <p>💡 提示行会自动跳过</p>
       </div>
     </div>
     <div class="form-group">
@@ -994,69 +1138,216 @@ function savePlan() {
   showPage('plans');
 }
 
-// ===== Import =====
+// ===== Import (Smart Parser) =====
 function importPlan() {
   const text = document.getElementById('importText').value.trim();
   const name = document.getElementById('importPlanName').value.trim();
   if (!text) { alert('请粘贴健身计划'); return; }
   if (!name) { alert('请输入计划名称'); return; }
 
-  const lines = text.split('\n').filter(l => l.trim());
-  const exercises = [];
-
-  lines.forEach(line => {
-    line = line.trim();
-    // Rest line: 休息 60秒 or 休息 60
-    const restMatch = line.match(/^休息\s*(\d+)\s*秒?$/);
-    if (restMatch) {
-      exercises.push({ type: 'rest', duration: parseInt(restMatch[1]) });
-      return;
-    }
-    // Exercise: name sets组 reps次 duration秒
-    const exMatch = line.match(/^(.+?)\s+(\d+)\s*组\s+(\d+)\s*次\s+(\d+)\s*秒$/);
-    if (exMatch) {
-      exercises.push({
-        type: 'exercise',
-        name: exMatch[1].trim(),
-        sets: parseInt(exMatch[2]),
-        reps: parseInt(exMatch[3]),
-        duration: parseInt(exMatch[4]),
-        restBetweenSets: 30
-      });
-      return;
-    }
-    // Fallback: just a name with possible numbers
-    const simpleMatch = line.match(/^(.+?)\s+(\d+)\s*[组x×]\s*(\d+)\s*[次个]?$/);
-    if (simpleMatch) {
-      exercises.push({
-        type: 'exercise',
-        name: simpleMatch[1].trim(),
-        sets: parseInt(simpleMatch[2]),
-        reps: parseInt(simpleMatch[3]),
-        duration: 45,
-        restBetweenSets: 30
-      });
-      return;
-    }
-    // Last resort: treat as exercise name only
-    if (line.length > 0 && line.length < 50) {
-      exercises.push({
-        type: 'exercise',
-        name: line,
-        sets: 3,
-        reps: 12,
-        duration: 45,
-        restBetweenSets: 30
-      });
-    }
-  });
-
+  const exercises = parseWorkoutText(text);
   if (exercises.length === 0) { alert('未识别到有效动作，请检查格式'); return; }
   plans.push({ name, exercises, createdAt: new Date().toISOString() });
   savePlans();
   document.getElementById('importText').value = '';
   document.getElementById('importPlanName').value = '';
   showPage('plans');
+}
+
+function parseWorkoutText(text) {
+  const lines = text.split('\n');
+  const exercises = [];
+
+  // Section header patterns: "背部 (25min)", "二头 (12min)", "热身 (5-8min)", "收尾有氧 (15min)"
+  const sectionHeaderRe = /^[\u4e00-\u9fff\w]+\s*[\(（]\s*\d+/;
+  // Numbered exercise: "1. 哑铃单臂划船 — 4组 × 10-12次/侧，组休90秒"
+  const numberedExRe = /^\d+[\.\、\)）]\s*/;
+  // Hint line starting with emoji or 💡
+  const hintRe = /^[💡🔥😌⚡🏋️🏃🧘]/;
+
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i].trim();
+    if (!line) continue;
+
+    // Skip section headers (e.g. "背部 (25min)")
+    if (sectionHeaderRe.test(line)) {
+      // Extract section time for duration estimation
+      const sectionTimeMatch = line.match(/[\(（]\s*(\d+)/);
+      const sectionMins = sectionTimeMatch ? parseInt(sectionTimeMatch[1]) : 0;
+
+      // Check if this is a single-line section like "热身 (5-8min) 椭圆机5分钟 + ..."
+      // or "收尾有氧 (15min) 椭圆机，阻力6-8，步频130-140RPM"
+      const afterHeader = line.replace(/^[\u4e00-\u9fff\w]+\s*[\(（][^)）]*[\)）]\s*/, '').trim();
+      if (afterHeader) {
+        // Parse compound exercises separated by +
+        const subItems = afterHeader.split(/[+＋]/).map(s => s.trim()).filter(Boolean);
+        if (subItems.length > 1) {
+          subItems.forEach(item => {
+            const parsed = parseSingleExercise(item);
+            if (parsed) exercises.push(parsed);
+          });
+        } else {
+          // Single item after header — likely a cardio exercise
+          // Extract just the exercise name (before commas with details)
+          const cardioName = afterHeader.split(/[，,]/)[0].trim();
+          exercises.push({
+            type: 'exercise',
+            name: cardioName,
+            sets: 1,
+            reps: 1,
+            duration: sectionMins ? sectionMins * 60 : 300,
+            restBetweenSets: 0
+          });
+        }
+      }
+      continue;
+    }
+
+    // Skip pure hint/tip lines
+    if (hintRe.test(line)) continue;
+    // Skip lines that are purely emoji or 💡 explanation
+    if (/^💡/.test(line)) continue;
+
+    // Strip leading number: "1. " "2、"
+    line = line.replace(numberedExRe, '').trim();
+
+    // Strip trailing hints after 💡
+    line = line.replace(/💡.*$/, '').trim();
+
+    // Skip if empty after stripping
+    if (!line) continue;
+
+    // Rest line: "休息 60秒"
+    const restMatch = line.match(/^休息\s*(\d+)\s*秒?$/);
+    if (restMatch) {
+      exercises.push({ type: 'rest', duration: parseInt(restMatch[1]) });
+      continue;
+    }
+
+    // Try to parse as exercise line
+    const parsed = parseSingleExercise(line);
+    if (parsed) {
+      exercises.push(parsed);
+    }
+  }
+  return exercises;
+}
+
+function parseSingleExercise(line) {
+  // Clean up: remove leading/trailing punctuation, emoji
+  line = line.replace(/[，,;；。]+$/, '').trim();
+  if (!line || line.length < 2) return null;
+
+  // Default values
+  let name = '', sets = 3, reps = 12, duration = 45, rest = 60;
+
+  // Try structured formats first:
+  // Format: "哑铃单臂划船 — 4组 × 10-12次/侧，组休90秒"
+  // Format: "哑铃交替弯举 — 3组 × 12次/侧，组休60秒"
+  // Format: "平板卧推 4组 12次 60秒"
+
+  // Split name from parameters on — or --(em dash) or first digit occurrence after name
+  let namePart = '', paramPart = '';
+
+  const dashSplit = line.split(/\s*[—–]\s*/);
+  if (dashSplit.length >= 2) {
+    namePart = dashSplit[0].trim();
+    paramPart = dashSplit.slice(1).join(' ').trim();
+  } else {
+    // Try splitting at first occurrence of digits that look like sets
+    const match = line.match(/^(.+?)\s+(\d+\s*[组x×])/);
+    if (match) {
+      namePart = match[1].trim();
+      paramPart = line.slice(match.index + match[1].length).trim();
+    } else {
+      // Could be a simple name like "椭圆机5分钟" or "弹力带拉伸肩袖" or "肩胛骨绕环10次"
+      const simpleTime = line.match(/^(.+?)(\d+)\s*分钟?$/);
+      if (simpleTime) {
+        return {
+          type: 'exercise',
+          name: simpleTime[1].trim() || line,
+          sets: 1,
+          reps: 1,
+          duration: parseInt(simpleTime[2]) * 60,
+          restBetweenSets: 0
+        };
+      }
+      const simpleReps = line.match(/^(.+?)(\d+)\s*[次个]$/);
+      if (simpleReps) {
+        return {
+          type: 'exercise',
+          name: simpleReps[1].trim() || line,
+          sets: 1,
+          reps: parseInt(simpleReps[2]),
+          duration: 30,
+          restBetweenSets: 0
+        };
+      }
+      // Just a name, no parameters
+      if (line.length > 1 && line.length < 60) {
+        return {
+          type: 'exercise',
+          name: line.replace(/[（(][^)）]*[)）]/g, '').trim(),
+          sets: 1,
+          reps: 1,
+          duration: 45,
+          restBetweenSets: 30
+        };
+      }
+      return null;
+    }
+  }
+
+  // Clean up name - remove stuff in parentheses like （反向） and strip whitespace
+  name = namePart.replace(/[（(].*?[)）]/g, (match) => {
+    // Keep meaningful qualifiers
+    if (match.length <= 6) return match;
+    return '';
+  }).trim();
+  if (!name) name = namePart;
+
+  // Parse parameters from paramPart
+  // Sets: "4组" or "3组"
+  const setsMatch = paramPart.match(/(\d+)\s*组/);
+  if (setsMatch) sets = parseInt(setsMatch[1]);
+
+  // Reps: "10-12次" -> take first number; "12次/侧" "15次"
+  const repsMatch = paramPart.match(/(\d+)(?:\s*[-~]\s*\d+)?\s*次/);
+  if (repsMatch) reps = parseInt(repsMatch[1]);
+
+  // Rest: "组休90秒" "组休60秒" "休息60秒"
+  const restMatch = paramPart.match(/(?:组休|休息)\s*(\d+)\s*秒/);
+  if (restMatch) rest = parseInt(restMatch[1]);
+
+  // Duration per set: "每组时长45秒" or infer from reps
+  const durationMatch = paramPart.match(/(?:每组|时长)\s*(\d+)\s*秒/);
+  if (durationMatch) {
+    duration = parseInt(durationMatch[1]);
+  } else {
+    // Estimate: ~3-4 seconds per rep for strength, adjust
+    duration = Math.max(20, Math.min(90, reps * 4));
+  }
+
+  // Handle special duration formats like "阻力6-8，步频130-140RPM，心率130-145"
+  // This means it's a cardio exercise - check for 分钟/min in original context
+  const minMatch = paramPart.match(/(\d+)\s*(?:分钟|min)/i);
+  if (minMatch) {
+    duration = parseInt(minMatch[1]) * 60;
+    sets = 1;
+    reps = 1;
+    rest = 0;
+  }
+
+  if (!name) return null;
+
+  return {
+    type: 'exercise',
+    name: name,
+    sets: sets,
+    reps: reps,
+    duration: duration,
+    restBetweenSets: rest
+  };
 }
 
 // ===== Auto Generate =====
