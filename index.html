@@ -291,15 +291,23 @@ body {
 }
 .workout-screen.active { display: flex; }
 
-/* Dual-layer color transition system */
+/* Circular reveal color transition system */
 .workout-bg-layer {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   z-index: 0;
-  transition: opacity 0.8s ease-in-out;
 }
-.workout-bg-layer.bg-current { opacity: 1; }
-.workout-bg-layer.bg-next { opacity: 0; }
+.workout-bg-layer.bg-reveal {
+  clip-path: circle(0% at var(--reveal-x, 50%) var(--reveal-y, 50%));
+  will-change: clip-path;
+}
+.workout-bg-layer.bg-reveal.expanding {
+  animation: circleReveal 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes circleReveal {
+  0%   { clip-path: circle(0% at var(--reveal-x, 50%) var(--reveal-y, 50%)); }
+  100% { clip-path: circle(150% at var(--reveal-x, 50%) var(--reveal-y, 50%)); }
+}
 
 .workout-screen > *:not(.workout-bg-layer) { position: relative; z-index: 1; }
 
@@ -704,8 +712,8 @@ body {
 
 <!-- Workout Screen (Full Screen Overlay) -->
 <div class="workout-screen" id="workoutScreen">
-  <div class="workout-bg-layer bg-current" id="bgCurrent"></div>
-  <div class="workout-bg-layer bg-next" id="bgNext"></div>
+  <div class="workout-bg-layer" id="bgBase"></div>
+  <div class="workout-bg-layer bg-reveal" id="bgReveal"></div>
   <div class="workout-progress-bar" id="workoutProgressBar"></div>
   <div class="workout-counter" id="workoutCounter">1 / 5</div>
   <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊 提示音</button>
@@ -1166,6 +1174,73 @@ function buildWorkoutSteps(plan) {
   return steps;
 }
 
+// 30+ vibrant gradient colors — shuffled per workout so no repeats
+const ALL_WORKOUT_COLORS = [
+  // Warm reds & oranges
+  'linear-gradient(135deg, #FF6B35, #FF1744)',
+  'linear-gradient(135deg, #FF3D00, #D50000)',
+  'linear-gradient(135deg, #F4511E, #BF360C)',
+  'linear-gradient(135deg, #FF9100, #FF6D00)',
+  'linear-gradient(135deg, #FFAB00, #FF6F00)',
+  // Pinks & magentas
+  'linear-gradient(135deg, #FF4081, #C51162)',
+  'linear-gradient(135deg, #E91E63, #880E4F)',
+  'linear-gradient(135deg, #F50057, #AD1457)',
+  'linear-gradient(135deg, #FF80AB, #F50057)',
+  // Purples & violets
+  'linear-gradient(135deg, #7C4DFF, #E040FB)',
+  'linear-gradient(135deg, #D500F9, #6200EA)',
+  'linear-gradient(135deg, #AA00FF, #304FFE)',
+  'linear-gradient(135deg, #9C27B0, #4A148C)',
+  'linear-gradient(135deg, #CE93D8, #7B1FA2)',
+  // Blues
+  'linear-gradient(135deg, #2979FF, #0D47A1)',
+  'linear-gradient(135deg, #00B0FF, #0091EA)',
+  'linear-gradient(135deg, #448AFF, #1A237E)',
+  'linear-gradient(135deg, #536DFE, #304FFE)',
+  // Teals & cyans
+  'linear-gradient(135deg, #00BCD4, #006064)',
+  'linear-gradient(135deg, #1DE9B6, #00BFA5)',
+  'linear-gradient(135deg, #00E5FF, #0097A7)',
+  'linear-gradient(135deg, #64FFDA, #00897B)',
+  // Greens
+  'linear-gradient(135deg, #00E676, #1B5E20)',
+  'linear-gradient(135deg, #76FF03, #33691E)',
+  'linear-gradient(135deg, #69F0AE, #2E7D32)',
+  'linear-gradient(135deg, #00C853, #004D40)',
+  // Warm mixed
+  'linear-gradient(135deg, #FF6E40, #DD2C00)',
+  'linear-gradient(135deg, #FFD740, #FF6F00)',
+  'linear-gradient(135deg, #E040FB, #AA00FF)',
+  'linear-gradient(135deg, #7C4DFF, #00BCD4)',
+  'linear-gradient(135deg, #FF1744, #D500F9)',
+  'linear-gradient(135deg, #00BFA5, #2979FF)',
+  'linear-gradient(135deg, #F50057, #651FFF)',
+  'linear-gradient(135deg, #FF9100, #F50057)',
+  'linear-gradient(135deg, #00E676, #00B0FF)',
+];
+
+function buildColorSequence(stepCount) {
+  // Shuffle all colors and return enough for every step — guaranteed no repeats
+  const pool = [...ALL_WORKOUT_COLORS];
+  // Fisher-Yates shuffle
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  // If we need more than the pool size, shuffle again and append
+  const result = [];
+  while (result.length < stepCount) {
+    const batch = [...pool];
+    for (let i = batch.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [batch[i], batch[j]] = [batch[j], batch[i]];
+    }
+    result.push(...batch);
+  }
+  return result.slice(0, stepCount);
+}
+
 function startWorkout(planIndex) {
   const plan = plans[planIndex];
   const steps = buildWorkoutSteps(plan);
@@ -1180,12 +1255,15 @@ function startWorkout(planIndex) {
   document.getElementById('workoutScreen').classList.add('active');
 
   // Initialize background layers
-  const bgCurrent = document.getElementById('bgCurrent');
-  const bgNext = document.getElementById('bgNext');
-  bgCurrent.style.background = 'linear-gradient(135deg, #1a1a2e, #16213e)';
-  bgCurrent.className = 'workout-bg-layer bg-current';
-  bgNext.style.background = '';
-  bgNext.className = 'workout-bg-layer bg-next';
+  const bgBase = document.getElementById('bgBase');
+  const bgReveal = document.getElementById('bgReveal');
+  bgBase.style.background = 'linear-gradient(135deg, #1a1a2e, #16213e)';
+  bgReveal.className = 'workout-bg-layer bg-reveal';
+  bgReveal.style.background = '';
+
+  // Build a non-repeating color sequence for the entire workout
+  currentWorkout.colorSequence = buildColorSequence(steps.length);
+  currentWorkout.colorIndex = 0;
 
   audioCtx.resume();
   loadStep(0);
@@ -1200,49 +1278,41 @@ function loadStep(index) {
   const step = currentWorkout.steps[index];
   const screen = document.getElementById('workoutScreen');
 
-  // Phase styling with smooth color transition
+  // Phase styling with circular reveal color transition
   screen.className = 'workout-screen active';
-  const EXERCISE_COLORS = [
-    'linear-gradient(135deg, #FF6B35, #FF1744)',
-    'linear-gradient(135deg, #7C4DFF, #E040FB)',
-    'linear-gradient(135deg, #FF4081, #F50057)',
-    'linear-gradient(135deg, #FF9100, #FF6D00)',
-    'linear-gradient(135deg, #D500F9, #6200EA)',
-    'linear-gradient(135deg, #FF3D00, #DD2C00)',
-    'linear-gradient(135deg, #C51162, #880E4F)',
-    'linear-gradient(135deg, #AA00FF, #304FFE)',
-    'linear-gradient(135deg, #F4511E, #E65100)',
-    'linear-gradient(135deg, #E91E63, #9C27B0)',
-  ];
-  const REST_COLOR = 'linear-gradient(135deg, #00D4AA, #0088ff)';
 
-  // Determine the target background color
-  let targetBg;
-  if (step.type === 'exercise') {
-    // Find which exercise index this is (by unique name)
-    const uniqueNames = [...new Set(currentWorkout.steps.filter(s => s.type === 'exercise').map(s => s.name))];
-    const exIdx = uniqueNames.indexOf(step.name);
-    targetBg = EXERCISE_COLORS[exIdx % EXERCISE_COLORS.length];
-  } else {
-    targetBg = REST_COLOR;
+  // Get the next color from the non-repeating sequence
+  const targetBg = currentWorkout.colorSequence[currentWorkout.colorIndex % currentWorkout.colorSequence.length];
+  currentWorkout.colorIndex++;
+
+  // Circular reveal animation from the "next" button
+  const bgBase = document.getElementById('bgBase');
+  const bgReveal = document.getElementById('bgReveal');
+  const nextBtn = document.querySelector('.workout-controls .workout-btn:last-child');
+
+  // Calculate reveal origin point (center of the "next" button)
+  let revealX = '85%', revealY = '90%';
+  if (nextBtn) {
+    const rect = nextBtn.getBoundingClientRect();
+    revealX = ((rect.left + rect.width / 2) / window.innerWidth * 100) + '%';
+    revealY = ((rect.top + rect.height / 2) / window.innerHeight * 100) + '%';
   }
 
-  // Dual-layer crossfade transition
-  const bgCurrent = document.getElementById('bgCurrent');
-  const bgNext = document.getElementById('bgNext');
-  bgNext.style.background = targetBg;
-  bgNext.classList.add('bg-current');
-  bgNext.classList.remove('bg-next');
-  bgCurrent.classList.add('bg-next');
-  bgCurrent.classList.remove('bg-current');
-  // After transition completes, swap layers for next transition
-  setTimeout(() => {
-    bgCurrent.style.background = targetBg;
-    bgCurrent.classList.add('bg-current');
-    bgCurrent.classList.remove('bg-next');
-    bgNext.classList.add('bg-next');
-    bgNext.classList.remove('bg-current');
-  }, 850);
+  // Reset and trigger the reveal
+  bgReveal.classList.remove('expanding');
+  bgReveal.style.background = targetBg;
+  bgReveal.style.setProperty('--reveal-x', revealX);
+  bgReveal.style.setProperty('--reveal-y', revealY);
+  // Force reflow to restart animation
+  void bgReveal.offsetWidth;
+  bgReveal.classList.add('expanding');
+
+  // After animation completes, promote reveal to base
+  bgReveal.addEventListener('animationend', function handler() {
+    bgReveal.removeEventListener('animationend', handler);
+    bgBase.style.background = targetBg;
+    bgReveal.classList.remove('expanding');
+  }, { once: true });
 
   // Progress
   const progress = ((index + 1) / currentWorkout.steps.length) * 100;
