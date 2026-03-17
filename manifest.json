@@ -1,0 +1,15 @@
+{
+  "name": "健身跟练",
+  "short_name": "健身跟练",
+  "description": "全屏健身跟练计时器，告别来回切换",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1a1a2e",
+  "theme_color": "#FF6B35",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "icons/icon-192.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "icons/icon-192.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

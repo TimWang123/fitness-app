@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head><title>Generate Icons</title></head>
+<body>
+<h2>点击按钮生成图标，然后右键保存到 icons 文件夹</h2>
+<p>或者直接用下面的方式自动下载：</p>
+<button onclick="generateAll()">生成并下载所有图标</button>
+<div id="preview" style="display:flex;gap:20px;flex-wrap:wrap;margin-top:20px"></div>
+<script>
+function drawIcon(size, maskable = false) {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  const pad = maskable ? size * 0.1 : 0;
+  const s = size - pad * 2;
+
+  // Background
+  const grad = ctx.createLinearGradient(0, 0, size, size);
+  grad.addColorStop(0, '#FF6B35');
+  grad.addColorStop(1, '#FF1744');
+  if (maskable) {
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, size, size);
+  } else {
+    ctx.beginPath();
+    const r = size * 0.18;
+    ctx.moveTo(r, 0); ctx.lineTo(size - r, 0);
+    ctx.quadraticCurveTo(size, 0, size, r);
+    ctx.lineTo(size, size - r);
+    ctx.quadraticCurveTo(size, size, size - r, size);
+    ctx.lineTo(r, size);
+    ctx.quadraticCurveTo(0, size, 0, size - r);
+    ctx.lineTo(0, r);
+    ctx.quadraticCurveTo(0, 0, r, 0);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+  }
+
+  // Dumbbell icon
+  const cx = size / 2;
+  const cy = size / 2;
+  const scale = s / 512;
+  ctx.save();
+  ctx.translate(pad, pad);
+
+  ctx.strokeStyle = 'white';
+  ctx.fillStyle = 'white';
+  ctx.lineWidth = 12 * scale;
+  ctx.lineCap = 'round';
+
+  // Bar
+  ctx.beginPath();
+  ctx.moveTo(130 * scale, 256 * scale);
+  ctx.lineTo(382 * scale, 256 * scale);
+  ctx.stroke();
+
+  // Left plates
+  ctx.fillRect(90 * scale, 180 * scale, 40 * scale, 152 * scale);
+  ctx.fillRect(55 * scale, 200 * scale, 35 * scale, 112 * scale);
+
+  // Right plates
+  ctx.fillRect(382 * scale, 180 * scale, 40 * scale, 152 * scale);
+  ctx.fillRect(422 * scale, 200 * scale, 35 * scale, 112 * scale);
+
+  // Timer circle
+  ctx.beginPath();
+  ctx.arc(356 * scale, 160 * scale, 80 * scale, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.fill();
+  ctx.strokeStyle = 'white';
+  ctx.lineWidth = 6 * scale;
+  ctx.stroke();
+
+  // Timer hands
+  ctx.beginPath();
+  ctx.moveTo(356 * scale, 160 * scale);
+  ctx.lineTo(356 * scale, 105 * scale);
+  ctx.strokeStyle = 'white';
+  ctx.lineWidth = 6 * scale;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(356 * scale, 160 * scale);
+  ctx.lineTo(400 * scale, 170 * scale);
+  ctx.lineWidth = 4 * scale;
+  ctx.stroke();
+
+  ctx.restore();
+  return canvas;
+}
+
+function generateAll() {
+  const configs = [
+    { size: 192, maskable: false, name: 'icon-192.png' },
+    { size: 512, maskable: false, name: 'icon-512.png' },
+    { size: 192, maskable: true, name: 'icon-maskable-192.png' },
+    { size: 512, maskable: true, name: 'icon-maskable-512.png' }
+  ];
+  const preview = document.getElementById('preview');
+  preview.innerHTML = '';
+  configs.forEach(cfg => {
+    const canvas = drawIcon(cfg.size, cfg.maskable);
+    const div = document.createElement('div');
+    div.style.textAlign = 'center';
+
+    const img = document.createElement('img');
+    img.src = canvas.toDataURL('image/png');
+    img.style.width = '96px';
+    img.style.height = '96px';
+    img.style.border = '1px solid #ccc';
+    div.appendChild(img);
+
+    const label = document.createElement('p');
+    label.textContent = cfg.name;
+    div.appendChild(label);
+
+    // Auto download
+    const link = document.createElement('a');
+    link.download = cfg.name;
+    link.href = canvas.toDataURL('image/png');
+    link.textContent = '下载';
+    link.style.display = 'block';
+    link.click();
+    div.appendChild(link);
+
+    preview.appendChild(div);
+  });
+}
+</script>
+</body>
+</html>
