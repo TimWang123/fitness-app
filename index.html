@@ -403,18 +403,76 @@ body {
 
 .workout-screen.done-phase { background: linear-gradient(135deg, #00E676, #00BFA5); }
 
-.workout-progress-bar {
+/* Side progress rail */
+.side-progress {
   position: absolute;
-  top: 0;
-  left: 0;
-  height: 6px;
-  background: rgba(255,255,255,0.8);
-  transition: width 0.3s;
-  border-radius: 0 3px 3px 0;
+  left: 16px;
+  top: 70px;
+  bottom: 30px;
+  width: 4px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 2px;
+  z-index: 2;
+}
+.side-progress-fill {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 0%;
+  background: rgba(255,255,255,0.9);
+  border-radius: 2px;
+  transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.side-progress-marker {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  top: 0%;
+  width: 14px;
+  height: 14px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(255,255,255,0.6);
+  transition: top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Top bar */
+.workout-topbar {
+  position: absolute;
+  top: 16px; left: 36px; right: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+.workout-chip {
+  background: rgba(0,0,0,0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85em;
+  font-weight: 600;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+  transition: all 0.2s;
+}
+.workout-chip:active { transform: scale(0.95); }
+
+/* Main content */
+.workout-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px 0;
+  z-index: 1;
 }
 
 .workout-phase-label {
-  font-size: 1.1em;
+  font-size: 1em;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 3px;
@@ -423,46 +481,113 @@ body {
 }
 
 .workout-exercise-name {
-  font-size: 3em;
+  font-size: 2.6em;
   font-weight: 900;
   margin-bottom: 8px;
   text-shadow: 0 2px 10px rgba(0,0,0,0.3);
   line-height: 1.1;
+  max-width: 90%;
 }
 
 .workout-exercise-detail {
   font-size: 1.2em;
   opacity: 0.85;
-  margin-bottom: 30px;
+  margin-bottom: 16px;
 }
 
 .workout-timer {
-  font-size: 8em;
+  font-size: 7em;
   font-weight: 900;
   font-variant-numeric: tabular-nums;
   text-shadow: 0 4px 20px rgba(0,0,0,0.3);
   line-height: 1;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .workout-set-info {
-  font-size: 1.3em;
+  font-size: 1.2em;
   font-weight: 600;
   opacity: 0.9;
-  margin-bottom: 30px;
+}
+
+/* Done button for count-based exercises */
+.workout-done-btn {
+  margin-top: 20px;
+  padding: 18px 60px;
+  font-size: 1.4em;
+  font-weight: 800;
+  color: white;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 2px solid rgba(255,255,255,0.4);
+  border-radius: 60px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 6px 32px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3);
+}
+.workout-done-btn:hover { background: rgba(255,255,255,0.3); }
+.workout-done-btn:active { transform: scale(0.95); }
+
+/* Bottom area */
+.workout-bottom-area {
+  flex-shrink: 0;
+  padding: 16px 20px 24px;
+  text-align: center;
+  z-index: 1;
 }
 
 .workout-next {
-  font-size: 0.95em;
+  font-size: 0.9em;
   opacity: 0.7;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .workout-controls {
   display: flex;
   gap: 16px;
   align-items: center;
+  justify-content: center;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.workout-controls.merging .workout-btn {
+  opacity: 0; transform: scale(0); width: 0; padding: 0; margin: 0;
+  border: none; overflow: hidden;
+}
+.workout-controls.merging { gap: 0; }
+
+/* Celebrate button */
+.celebrate-btn {
+  padding: 18px 48px;
+  font-size: 1.3em;
+  font-weight: 800;
+  color: white;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 2px solid rgba(255,255,255,0.4);
+  border-radius: 60px;
+  cursor: pointer;
+  box-shadow: 0 6px 32px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3);
+  animation: celebratePulse 1.5s ease-in-out infinite;
+  transition: all 0.3s;
+}
+.celebrate-btn:hover { background: rgba(255,255,255,0.35); transform: scale(1.05); }
+.celebrate-btn:active { transform: scale(0.95); }
+@keyframes celebratePulse {
+  0%, 100% { box-shadow: 0 6px 32px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3), 0 0 0 0 rgba(255,255,255,0.3); }
+  50% { box-shadow: 0 6px 32px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3), 0 0 0 12px rgba(255,255,255,0); }
+}
+
+/* Fireworks canvas */
+.fireworks-canvas {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 3;
+  pointer-events: none;
+  display: none;
+}
+.fireworks-canvas.active { display: block; }
 .workout-btn {
   width: 56px;
   height: 56px;
@@ -502,40 +627,7 @@ body {
   box-shadow: 0 6px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.1);
 }
 
-.workout-exit {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: rgba(0,0,0,0.2);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 0.9em;
-  font-weight: 600;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
-  transition: all 0.2s;
-}
-.workout-exit:hover { background: rgba(0,0,0,0.35); }
-.workout-exit:active { transform: scale(0.95); }
-
-.workout-counter {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  background: rgba(0,0,0,0.2);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.12);
-  padding: 8px 16px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 0.9em;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
-}
+/* (workout-exit and workout-counter replaced by .workout-chip in .workout-topbar) */
 
 /* ===== Completion Screen ===== */
 .completion-stats {
@@ -622,18 +714,21 @@ body {
   .tabs { border-radius: 12px; }
   .tab { padding: 9px 6px; font-size: 0.8em; }
 
-  .workout-screen { padding: 16px 12px; }
-  .workout-exercise-name { font-size: 1.8em; }
-  .workout-exercise-detail { font-size: 1em; margin-bottom: 20px; }
-  .workout-timer { font-size: 4.5em; margin-bottom: 6px; }
-  .workout-set-info { font-size: 1.1em; margin-bottom: 20px; }
-  .workout-next { font-size: 0.85em; margin-bottom: 16px; }
+  .workout-screen { padding: 12px; }
+  .workout-content { padding: 50px 20px 0; }
+  .workout-exercise-name { font-size: 1.6em; }
+  .workout-exercise-detail { font-size: 0.95em; }
+  .workout-timer { font-size: 4em; }
+  .workout-set-info { font-size: 1em; }
+  .workout-next { font-size: 0.8em; }
   .workout-controls { gap: 12px; }
   .workout-btn { width: 48px; height: 48px; font-size: 1.2em; }
   .workout-btn.main { width: 64px; height: 64px; font-size: 1.5em; }
-  .workout-counter, .workout-exit, .sound-toggle { font-size: 0.75em; padding: 6px 10px; top: 12px; }
-  .workout-counter { left: 8px; }
-  .workout-exit { right: 8px; }
+  .workout-topbar { left: 28px; top: 12px; right: 12px; }
+  .workout-chip { padding: 6px 10px; font-size: 0.75em; }
+  .side-progress { left: 10px; top: 56px; }
+  .workout-done-btn { padding: 14px 40px; font-size: 1.2em; }
+  .celebrate-btn { padding: 14px 36px; font-size: 1.1em; }
 
   .completion-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .stat-item { padding: 12px 8px; }
@@ -900,30 +995,54 @@ body {
 <div class="workout-screen" id="workoutScreen">
   <div class="workout-bg-layer" id="bgBase"></div>
   <div class="workout-bg-layer bg-reveal" id="bgReveal"></div>
-  <div class="workout-progress-bar" id="workoutProgressBar"></div>
-  <div class="workout-counter" id="workoutCounter">1 / 5</div>
-  <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊 提示音</button>
-  <button class="workout-exit" onclick="exitWorkout()">✕ 退出</button>
 
-  <div class="workout-phase-label" id="workoutPhaseLabel">运动中</div>
-  <div class="workout-exercise-name slide-in" id="workoutExerciseName">深蹲</div>
-  <div class="workout-exercise-detail" id="workoutExerciseDetail">4组 × 12次</div>
-  <div class="workout-timer" id="workoutTimer">00:60</div>
-  <div class="workout-set-info" id="workoutSetInfo">第 1 组 / 共 4 组</div>
-  <div class="workout-next" id="workoutNext">下一个：休息 90秒</div>
-
-  <div class="workout-controls">
-    <button class="workout-btn" onclick="prevStep()" title="上一个">⏮</button>
-    <button class="workout-btn main" id="playPauseBtn" onclick="togglePause()">⏸</button>
-    <button class="workout-btn" onclick="nextStep()" title="下一个">⏭</button>
+  <!-- Side progress rail -->
+  <div class="side-progress" id="sideProgress">
+    <div class="side-progress-fill" id="sideProgressFill"></div>
+    <div class="side-progress-marker" id="sideProgressMarker"></div>
   </div>
+
+  <!-- Top bar -->
+  <div class="workout-topbar">
+    <button class="workout-chip" onclick="exitWorkout()">✕</button>
+    <div class="workout-chip" id="workoutCounter">1 / 5</div>
+    <button class="workout-chip" id="soundToggle" onclick="toggleSound()">🔊</button>
+  </div>
+
+  <!-- Main content -->
+  <div class="workout-content">
+    <div class="workout-phase-label" id="workoutPhaseLabel">运动中</div>
+    <div class="workout-exercise-name slide-in" id="workoutExerciseName">深蹲</div>
+    <div class="workout-exercise-detail" id="workoutExerciseDetail">4组 × 12次</div>
+    <div class="workout-timer" id="workoutTimer">00:60</div>
+    <div class="workout-set-info" id="workoutSetInfo">第 1 组 / 共 4 组</div>
+
+    <!-- "Done" button for count-based exercises -->
+    <button class="workout-done-btn" id="workoutDoneBtn" onclick="markDone()" style="display:none">✓ 完成</button>
+  </div>
+
+  <!-- Bottom area -->
+  <div class="workout-bottom-area">
+    <div class="workout-next" id="workoutNext">下一个：休息 90秒</div>
+    <div class="workout-controls" id="workoutControls">
+      <button class="workout-btn" id="prevBtn" onclick="prevStep()">⏮</button>
+      <button class="workout-btn main" id="playPauseBtn" onclick="togglePause()">⏸</button>
+      <button class="workout-btn" id="nextBtn" onclick="nextStep()">⏭</button>
+    </div>
+    <!-- Celebration button (hidden, appears after last step) -->
+    <button class="celebrate-btn" id="celebrateBtn" style="display:none" onclick="showCompletion()">🎉 训练完成！</button>
+  </div>
+
+  <!-- Fireworks canvas -->
+  <canvas class="fireworks-canvas" id="fireworksCanvas"></canvas>
 </div>
 
 <!-- Completion Screen -->
 <div class="workout-screen" id="completionScreen">
-  <div class="workout-phase-label">🎉 训练完成！</div>
-  <div class="workout-exercise-name">太棒了！</div>
-  <div class="completion-stats" id="completionStats">
+  <canvas class="fireworks-canvas active" id="completionFireworks"></canvas>
+  <div class="workout-phase-label" style="position:relative;z-index:1">🎉 训练完成！</div>
+  <div class="workout-exercise-name" style="position:relative;z-index:1">太棒了！</div>
+  <div class="completion-stats" id="completionStats" style="position:relative;z-index:1">
     <div class="stat-item">
       <div class="stat-value" id="statDuration">0:00</div>
       <div class="stat-label">总时长</div>
@@ -937,7 +1056,7 @@ body {
       <div class="stat-label">完成组数</div>
     </div>
   </div>
-  <button class="btn btn-lg" style="background:rgba(255,255,255,0.25);color:white;border:2px solid white" onclick="exitWorkout()">返回首页</button>
+  <button class="btn btn-lg" style="background:rgba(255,255,255,0.25);color:white;border:2px solid white;position:relative;z-index:1" onclick="exitWorkout()">返回首页</button>
 </div>
 
 <!-- Confirm Modal -->
@@ -1496,9 +1615,10 @@ function buildWorkoutSteps(plan) {
           set: s,
           totalSets: ex.sets,
           reps: ex.reps,
-          duration: ex.duration
+          duration: ex.duration,
+          restBetweenSets: ex.restBetweenSets || 0
         });
-        if (s < ex.sets) {
+        if (s < ex.sets && (ex.restBetweenSets || 0) > 0) {
           steps.push({ type: 'set-rest', name: '组间休息', duration: ex.restBetweenSets || 30, nextExercise: ex.name, nextSet: s + 1 });
         }
       }
@@ -1602,14 +1722,21 @@ function startWorkout(planIndex) {
   loadStep(0);
 }
 
+function isCountBasedStep(step) {
+  // A count-based exercise: 1 set, and either short duration or no meaningful timer
+  return step.type === 'exercise' && step.totalSets === 1 && step.reps <= 1 && step.duration <= 60;
+}
+
 function loadStep(index) {
   if (index >= currentWorkout.steps.length) {
-    finishWorkout();
+    // Last step done — trigger merge animation, then fireworks
+    triggerCompletion();
     return;
   }
   currentWorkout.currentStep = index;
   const step = currentWorkout.steps[index];
   const screen = document.getElementById('workoutScreen');
+  const isLast = (index === currentWorkout.steps.length - 1);
 
   // Phase styling with circular reveal color transition
   screen.className = 'workout-screen active';
@@ -1621,9 +1748,8 @@ function loadStep(index) {
   // Circular reveal animation from the "next" button
   const bgBase = document.getElementById('bgBase');
   const bgReveal = document.getElementById('bgReveal');
-  const nextBtn = document.querySelector('.workout-controls .workout-btn:last-child');
+  const nextBtn = document.getElementById('nextBtn');
 
-  // Calculate reveal origin point (center of the "next" button)
   let revealX = '85%', revealY = '90%';
   if (nextBtn) {
     const rect = nextBtn.getBoundingClientRect();
@@ -1631,31 +1757,28 @@ function loadStep(index) {
     revealY = ((rect.top + rect.height / 2) / window.innerHeight * 100) + '%';
   }
 
-  // Reset and trigger the reveal
   bgReveal.classList.remove('expanding');
   bgReveal.style.background = targetBg;
   bgReveal.style.setProperty('--reveal-x', revealX);
   bgReveal.style.setProperty('--reveal-y', revealY);
-  // Force reflow to restart animation
   void bgReveal.offsetWidth;
   bgReveal.classList.add('expanding');
-
-  // After animation completes, promote reveal to base
   bgReveal.addEventListener('animationend', function handler() {
     bgReveal.removeEventListener('animationend', handler);
     bgBase.style.background = targetBg;
     bgReveal.classList.remove('expanding');
   }, { once: true });
 
-  // Progress
-  const progress = ((index + 1) / currentWorkout.steps.length) * 100;
-  document.getElementById('workoutProgressBar').style.width = progress + '%';
+  // Side progress
+  const progressPct = ((index) / currentWorkout.steps.length) * 100;
+  document.getElementById('sideProgressFill').style.height = progressPct + '%';
+  document.getElementById('sideProgressMarker').style.top = progressPct + '%';
 
   // Counter
   const exerciseSteps = currentWorkout.steps.filter(s => s.type === 'exercise');
   const currentExIdx = exerciseSteps.indexOf(step);
   if (step.type === 'exercise') {
-    document.getElementById('workoutCounter').textContent = `动作 ${currentExIdx + 1} / ${exerciseSteps.length}`;
+    document.getElementById('workoutCounter').textContent = `${currentExIdx + 1} / ${exerciseSteps.length}`;
   } else {
     document.getElementById('workoutCounter').textContent = `${index + 1} / ${currentWorkout.steps.length}`;
   }
@@ -1666,12 +1789,39 @@ function loadStep(index) {
   const detailEl = document.getElementById('workoutExerciseDetail');
   const setInfo = document.getElementById('workoutSetInfo');
   const nextInfo = document.getElementById('workoutNext');
+  const timerEl = document.getElementById('workoutTimer');
+  const doneBtn = document.getElementById('workoutDoneBtn');
+  const controlsEl = document.getElementById('workoutControls');
+  const celebrateEl = document.getElementById('celebrateBtn');
+
+  // Reset states
+  doneBtn.style.display = 'none';
+  timerEl.style.display = '';
+  controlsEl.classList.remove('merging');
+  controlsEl.style.display = '';
+  celebrateEl.style.display = 'none';
+
+  const countBased = isCountBasedStep(step);
 
   if (step.type === 'exercise') {
     phaseLabel.textContent = '🔥 运动中';
     nameEl.textContent = step.name;
-    detailEl.textContent = `${step.reps}次/组`;
-    setInfo.textContent = `第 ${step.set} 组 / 共 ${step.totalSets} 组`;
+    if (step.totalSets > 1) {
+      detailEl.textContent = `${step.reps}次/组`;
+      setInfo.textContent = `第 ${step.set} 组 / 共 ${step.totalSets} 组`;
+    } else if (step.reps > 1) {
+      detailEl.textContent = `${step.reps} 次`;
+      setInfo.textContent = '';
+    } else {
+      detailEl.textContent = '';
+      setInfo.textContent = '';
+    }
+
+    if (countBased) {
+      // Count-based: show done button, hide timer
+      timerEl.style.display = 'none';
+      doneBtn.style.display = '';
+    }
   } else {
     phaseLabel.textContent = '😌 休息';
     nameEl.textContent = '休息一下';
@@ -1683,12 +1833,12 @@ function loadStep(index) {
   if (index + 1 < currentWorkout.steps.length) {
     const next = currentWorkout.steps[index + 1];
     if (next.type === 'exercise') {
-      nextInfo.textContent = `下一个：${next.name}（第${next.set}组）`;
+      nextInfo.textContent = `下一个：${next.name}`;
     } else {
       nextInfo.textContent = `下一个：休息 ${next.duration}秒`;
     }
   } else {
-    nextInfo.textContent = '最后一项了！加油！';
+    nextInfo.textContent = '最后一项了！加油！💪';
   }
 
   // Animate name
@@ -1696,14 +1846,123 @@ function loadStep(index) {
   void nameEl.offsetWidth;
   nameEl.classList.add('slide-in');
 
-  // Timer
-  timeRemaining = step.duration;
-  isPaused = false;
-  document.getElementById('playPauseBtn').textContent = '⏸';
-  updateTimerDisplay();
-  startTimer();
+  // Timer (skip for count-based)
+  if (!countBased) {
+    timeRemaining = step.duration;
+    isPaused = false;
+    document.getElementById('playPauseBtn').textContent = '⏸';
+    updateTimerDisplay();
+    startTimer();
+  } else {
+    clearInterval(timerInterval);
+  }
 
   beep(600, 120, 1);
+}
+
+function markDone() {
+  // For count-based exercises — user confirms completion
+  clearInterval(timerInterval);
+  const step = currentWorkout.steps[currentWorkout.currentStep];
+  if (step.type === 'exercise') totalSetsCompleted++;
+  loadStep(currentWorkout.currentStep + 1);
+}
+
+function triggerCompletion() {
+  // Merge the 3 buttons into celebration button
+  const controls = document.getElementById('workoutControls');
+  const celebrateBtn = document.getElementById('celebrateBtn');
+
+  controls.classList.add('merging');
+
+  // Update side progress to 100%
+  document.getElementById('sideProgressFill').style.height = '100%';
+  document.getElementById('sideProgressMarker').style.top = '100%';
+
+  setTimeout(() => {
+    controls.style.display = 'none';
+    celebrateBtn.style.display = '';
+
+    // Start fireworks
+    startFireworks(document.getElementById('fireworksCanvas'));
+  }, 500);
+}
+
+function showCompletion() {
+  stopFireworks();
+  finishWorkout();
+}
+
+// ===== Fireworks =====
+let fireworksRAF = null;
+
+function startFireworks(canvas) {
+  canvas.classList.add('active');
+  canvas.width = canvas.parentElement.offsetWidth;
+  canvas.height = canvas.parentElement.offsetHeight;
+  const ctx = canvas.getContext('2d');
+  const particles = [];
+  const colors = ['#FF6B35','#FF4081','#7C4DFF','#00D4AA','#FFAB00','#00B0FF','#FF1744','#00E676','#E040FB','#FFD740'];
+
+  function createBurst(x, y) {
+    const count = 40 + Math.random() * 30;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.5;
+      const speed = 2 + Math.random() * 5;
+      particles.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        decay: 0.01 + Math.random() * 0.015,
+        color,
+        size: 2 + Math.random() * 3,
+      });
+    }
+  }
+
+  let lastBurst = 0;
+  function animate(t) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Auto-launch bursts
+    if (t - lastBurst > 400 + Math.random() * 600) {
+      createBurst(
+        canvas.width * (0.15 + Math.random() * 0.7),
+        canvas.height * (0.15 + Math.random() * 0.5)
+      );
+      lastBurst = t;
+    }
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.05; // gravity
+      p.vx *= 0.99;
+      p.life -= p.decay;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      ctx.globalAlpha = p.life;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    fireworksRAF = requestAnimationFrame(animate);
+  }
+  fireworksRAF = requestAnimationFrame(animate);
+}
+
+function stopFireworks() {
+  if (fireworksRAF) cancelAnimationFrame(fireworksRAF);
+  fireworksRAF = null;
+  document.querySelectorAll('.fireworks-canvas').forEach(c => {
+    c.classList.remove('active');
+    const ctx = c.getContext('2d');
+    ctx.clearRect(0, 0, c.width, c.height);
+  });
 }
 
 function startTimer() {
@@ -1767,6 +2026,7 @@ function prevStep() {
 
 function finishWorkout() {
   clearInterval(timerInterval);
+  stopFireworks();
   document.getElementById('workoutScreen').classList.remove('active');
 
   const elapsed = Math.round((Date.now() - workoutStartTime) / 1000);
@@ -1783,11 +2043,17 @@ function finishWorkout() {
   const screen = document.getElementById('completionScreen');
   screen.className = 'workout-screen active done-phase';
 
+  // Start fireworks on completion screen
+  setTimeout(() => {
+    startFireworks(document.getElementById('completionFireworks'));
+  }, 300);
+
   beep(800, 100, 5);
 }
 
 function exitWorkout() {
   clearInterval(timerInterval);
+  stopFireworks();
   document.getElementById('workoutScreen').classList.remove('active');
   document.getElementById('completionScreen').classList.remove('active');
   document.getElementById('mainNav').style.display = 'flex';
