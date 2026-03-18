@@ -400,37 +400,46 @@ body {
   100% { clip-path: circle(150% at var(--reveal-x, 50%) var(--reveal-y, 50%)); }
 }
 
-.workout-screen > *:not(.workout-bg-layer) { position: relative; z-index: 1; }
+.workout-screen > *:not(.workout-bg-layer):not(.fireworks-canvas):not(.side-progress) { position: relative; z-index: 1; }
 
-.workout-screen.done-phase { background: linear-gradient(135deg, #00E676, #00BFA5); }
+.workout-screen.done-phase {
+  background: #ffffff;
+  transition: background 1.5s ease-out;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
 
 /* Side progress rail */
 .side-progress {
   position: absolute;
-  left: 16px;
+  left: 14px;
   top: 70px;
-  bottom: 30px;
-  width: 4px;
-  background: rgba(255,255,255,0.15);
-  border-radius: 2px;
+  bottom: 100px;
+  width: 6px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 3px;
   z-index: 2;
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.15);
 }
 .side-progress-fill {
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 0%;
   background: rgba(255,255,255,0.9);
-  border-radius: 2px;
+  border-radius: 3px;
   transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px rgba(255,255,255,0.5);
 }
 .side-progress-marker {
   position: absolute;
   left: 50%;
   transform: translate(-50%, -50%);
   top: 0%;
-  width: 28px;
-  height: 28px;
-  filter: drop-shadow(0 0 6px rgba(255,255,255,0.7));
+  width: 30px;
+  height: 30px;
+  filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
   transition: top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .side-progress-marker svg {
@@ -668,19 +677,117 @@ body {
 /* (workout-exit and workout-counter replaced by .workout-chip in .workout-topbar) */
 
 /* ===== Completion Screen ===== */
+.completion-report {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 40px 20px 40px;
+  position: relative;
+  z-index: 1;
+  color: var(--text);
+}
+.completion-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.completion-header h2 {
+  font-size: 2em;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 4px;
+}
+.completion-date {
+  color: var(--text-dim);
+  font-size: 0.9em;
+}
 .completion-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin: 30px 0;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 .stat-item {
-  background: rgba(255,255,255,0.15);
-  border-radius: 12px;
-  padding: 16px;
+  background: rgba(255,107,53,0.08);
+  border-radius: 14px;
+  padding: 16px 12px;
+  text-align: center;
+  border: 1px solid rgba(255,107,53,0.12);
 }
-.stat-value { font-size: 2em; font-weight: 900; }
-.stat-label { font-size: 0.8em; opacity: 0.8; margin-top: 4px; }
+.stat-value { font-size: 1.8em; font-weight: 900; color: var(--primary); }
+.stat-label { font-size: 0.8em; color: var(--text-dim); margin-top: 4px; }
+.completion-exercises {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.completion-ex-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 12px;
+}
+.completion-ex-item .ex-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+  flex-shrink: 0;
+}
+.completion-ex-item .ex-info { flex: 1; }
+.completion-ex-item .ex-name { font-weight: 700; font-size: 0.95em; }
+.completion-ex-item .ex-detail { font-size: 0.8em; color: var(--text-dim); margin-top: 2px; }
+.completion-ex-item .ex-check { color: var(--secondary); font-size: 1.2em; font-weight: 700; }
+
+/* ===== History Cards ===== */
+.history-card {
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(255,255,255,0.6);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.8);
+}
+.history-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.history-card-header h3 { font-size: 1.05em; }
+.history-card-header .history-date { color: var(--text-dim); font-size: 0.8em; }
+.history-card-stats {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 10px;
+  font-size: 0.85em;
+}
+.history-card-stats span { color: var(--text-dim); }
+.history-card-stats strong { color: var(--text); margin-right: 2px; }
+.history-exercises-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.history-ex-tag {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.75em;
+  font-weight: 600;
+  background: rgba(255,107,53,0.08);
+  color: var(--primary);
+  border: 1px solid rgba(255,107,53,0.12);
+}
 
 /* ===== Tabs ===== */
 .tabs {
@@ -771,8 +878,10 @@ body {
 
   .completion-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .stat-item { padding: 12px 8px; }
-  .stat-value { font-size: 1.5em; }
+  .stat-value { font-size: 1.4em; }
   .stat-label { font-size: 0.7em; }
+  .completion-report { padding: 30px 16px 30px; }
+  .completion-header h2 { font-size: 1.6em; }
 
   .section-header { flex-direction: column; align-items: flex-start; gap: 8px; }
 
@@ -852,6 +961,7 @@ body {
     <button class="nav-link active" onclick="showPage('home')">🏠 <span class="label-text">首页</span></button>
     <button class="nav-link" onclick="showPage('plans')">📋 <span class="label-text">计划</span></button>
     <button class="nav-link" onclick="showPage('create')">✏️ <span class="label-text">新建</span></button>
+    <button class="nav-link" onclick="showPage('history')">📊 <span class="label-text">记录</span></button>
   </div>
 </nav>
 
@@ -1030,6 +1140,24 @@ body {
   </div>
 </div>
 
+<!-- History Page -->
+<div class="page" id="page-history">
+  <div class="section-header">
+    <div>
+      <h2>训练记录</h2>
+      <div class="subtitle">记录你的每一次努力</div>
+    </div>
+    <button class="btn btn-danger btn-sm" onclick="clearHistory()">清空记录</button>
+  </div>
+  <div id="historyList">
+    <div style="text-align:center;padding:40px;color:var(--text-dim)">
+      <p style="font-size:2em;margin-bottom:12px">📊</p>
+      <p>还没有训练记录</p>
+      <p style="font-size:0.85em;margin-top:8px">完成一次训练后记录会自动保存</p>
+    </div>
+  </div>
+</div>
+
 <!-- Workout Screen (Full Screen Overlay) -->
 <div class="workout-screen" id="workoutScreen">
   <div class="workout-bg-layer" id="bgBase"></div>
@@ -1081,24 +1209,30 @@ body {
 
 <!-- Completion Screen -->
 <div class="workout-screen" id="completionScreen">
-  <canvas class="fireworks-canvas active" id="completionFireworks"></canvas>
-  <div class="workout-phase-label" style="position:relative;z-index:1">🎉 训练完成！</div>
-  <div class="workout-exercise-name" style="position:relative;z-index:1">太棒了！</div>
-  <div class="completion-stats" id="completionStats" style="position:relative;z-index:1">
-    <div class="stat-item">
-      <div class="stat-value" id="statDuration">0:00</div>
-      <div class="stat-label">总时长</div>
+  <canvas class="fireworks-canvas" id="completionFireworks"></canvas>
+  <div class="completion-report" id="completionReport">
+    <div class="completion-header">
+      <div style="font-size:3em;margin-bottom:8px">🎉</div>
+      <h2>训练完成！</h2>
+      <p class="completion-date" id="completionDate"></p>
     </div>
-    <div class="stat-item">
-      <div class="stat-value" id="statExercises">0</div>
-      <div class="stat-label">完成动作</div>
+    <div class="completion-stats" id="completionStats">
+      <div class="stat-item">
+        <div class="stat-value" id="statDuration">0:00</div>
+        <div class="stat-label">总时长</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="statExercises">0</div>
+        <div class="stat-label">完成动作</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="statSets">0</div>
+        <div class="stat-label">完成组数</div>
+      </div>
     </div>
-    <div class="stat-item">
-      <div class="stat-value" id="statSets">0</div>
-      <div class="stat-label">完成组数</div>
-    </div>
+    <div class="completion-exercises" id="completionExercises"></div>
+    <button class="btn btn-primary btn-lg" style="width:100%;margin-top:20px" onclick="exitWorkout()">返回首页</button>
   </div>
-  <button class="btn btn-lg" style="background:rgba(255,255,255,0.25);color:white;border:2px solid white;position:relative;z-index:1" onclick="exitWorkout()">返回首页</button>
 </div>
 
 <!-- Confirm Modal -->
@@ -1116,6 +1250,7 @@ body {
 <script>
 // ===== State =====
 let plans = JSON.parse(localStorage.getItem('fitness-plans') || '[]');
+let workoutHistory = JSON.parse(localStorage.getItem('fitness-history') || '[]');
 let currentWorkout = null;
 let timerInterval = null;
 let timeRemaining = 0;
@@ -1157,7 +1292,9 @@ function showPage(name) {
   if (name === 'home') links[0].classList.add('active');
   if (name === 'plans') links[1].classList.add('active');
   if (name === 'create') links[2].classList.add('active');
+  if (name === 'history') links[3].classList.add('active');
   if (name === 'plans') renderPlans();
+  if (name === 'history') renderHistory();
 }
 
 function switchTab(name) {
@@ -1705,26 +1842,47 @@ function getDefaultHint(name) {
 // ===== Workout Engine =====
 function buildWorkoutSteps(plan) {
   const steps = [];
-  plan.exercises.forEach(ex => {
+  let lastExerciseName = '';
+  let lastRestDuration = 60; // default inter-exercise rest
+
+  plan.exercises.forEach((ex, idx) => {
     if (ex.type === 'rest') {
-      steps.push({ type: 'rest', name: '组间休息', duration: ex.duration });
-    } else {
-      for (let s = 1; s <= ex.sets; s++) {
+      steps.push({ type: 'rest', name: '休息', duration: ex.duration });
+      return;
+    }
+
+    // Add inter-exercise rest between different exercises (skip if plan already has explicit rest)
+    if (lastExerciseName && ex.name !== lastExerciseName) {
+      // Check if previous step is already a rest
+      const prev = steps[steps.length - 1];
+      if (!prev || (prev.type !== 'rest' && prev.type !== 'set-rest')) {
         steps.push({
-          type: 'exercise',
-          name: ex.name,
-          set: s,
-          totalSets: ex.sets,
-          reps: ex.reps,
-          duration: ex.duration,
-          restBetweenSets: ex.restBetweenSets || 0,
-          hint: ex.hint || ''
+          type: 'rest',
+          name: '换动作休息',
+          duration: lastRestDuration,
+          nextExercise: ex.name
         });
-        if (s < ex.sets && (ex.restBetweenSets || 0) > 0) {
-          steps.push({ type: 'set-rest', name: '组间休息', duration: ex.restBetweenSets || 30, nextExercise: ex.name, nextSet: s + 1 });
-        }
       }
     }
+
+    for (let s = 1; s <= ex.sets; s++) {
+      steps.push({
+        type: 'exercise',
+        name: ex.name,
+        set: s,
+        totalSets: ex.sets,
+        reps: ex.reps,
+        duration: ex.duration,
+        restBetweenSets: ex.restBetweenSets || 0,
+        hint: ex.hint || ''
+      });
+      if (s < ex.sets && (ex.restBetweenSets || 0) > 0) {
+        steps.push({ type: 'set-rest', name: '组间休息', duration: ex.restBetweenSets || 30, nextExercise: ex.name, nextSet: s + 1 });
+      }
+    }
+
+    lastExerciseName = ex.name;
+    lastRestDuration = ex.restBetweenSets || 60;
   });
   return steps;
 }
@@ -1930,8 +2088,8 @@ function loadStep(index) {
     }
   } else {
     phaseLabel.textContent = '😌 休息';
-    nameEl.textContent = '休息一下';
-    detailEl.textContent = '准备下一个动作';
+    nameEl.textContent = step.name === '换动作休息' ? '换动作休息' : '休息一下';
+    detailEl.textContent = step.nextExercise ? `下一个：${step.nextExercise}` : '准备下一个动作';
     setInfo.textContent = '';
   }
 
@@ -2028,20 +2186,63 @@ function triggerCompletion() {
 function showCompletion() {
   stopFireworks();
 
-  // Show completion screen BEFORE hiding workout screen for seamless transition
   const completionScreen = document.getElementById('completionScreen');
   const workoutScreen = document.getElementById('workoutScreen');
 
-  // Populate stats first
+  // Gather stats
   const elapsed = Math.round((Date.now() - workoutStartTime) / 1000);
   const mins = Math.floor(elapsed / 60);
   const secs = elapsed % 60;
-  const exerciseCount = currentWorkout.steps.filter(s => s.type === 'exercise')
-    .reduce((set, s) => { set.add(s.name); return set; }, new Set()).size;
 
+  // Build exercise summary
+  const exerciseMap = new Map();
+  currentWorkout.steps.forEach(s => {
+    if (s.type !== 'exercise') return;
+    if (!exerciseMap.has(s.name)) {
+      exerciseMap.set(s.name, { name: s.name, sets: 0, reps: s.reps, totalSets: s.totalSets });
+    }
+    exerciseMap.get(s.name).sets++;
+  });
+  const exerciseList = Array.from(exerciseMap.values());
+
+  // Populate stats
   document.getElementById('statDuration').textContent = `${mins}:${String(secs).padStart(2, '0')}`;
-  document.getElementById('statExercises').textContent = exerciseCount;
+  document.getElementById('statExercises').textContent = exerciseList.length;
   document.getElementById('statSets').textContent = totalSetsCompleted;
+
+  // Date
+  const now = new Date();
+  document.getElementById('completionDate').textContent =
+    `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  // Exercise detail list
+  const exColors = ['#FF6B35','#7C4DFF','#00D4AA','#FF4081','#00B0FF','#FFAB00','#E040FB','#00E676'];
+  const exListEl = document.getElementById('completionExercises');
+  exListEl.innerHTML = '<h3 style="margin-bottom:10px;font-size:1em;color:var(--text-dim)">训练详情</h3>' +
+    exerciseList.map((ex, i) => `
+      <div class="completion-ex-item">
+        <div class="ex-icon" style="background:${exColors[i % exColors.length]}22;color:${exColors[i % exColors.length]}">💪</div>
+        <div class="ex-info">
+          <div class="ex-name">${escapeHtml(ex.name)}</div>
+          <div class="ex-detail">${ex.sets}组${ex.reps > 1 ? ' × ' + ex.reps + '次' : ''}</div>
+        </div>
+        <div class="ex-check">✓</div>
+      </div>
+    `).join('');
+
+  // Save to history
+  const record = {
+    date: now.toISOString(),
+    planName: currentWorkout.plan.name,
+    duration: elapsed,
+    exercises: exerciseList.map(e => ({ name: e.name, sets: e.sets, reps: e.reps })),
+    totalSets: totalSetsCompleted,
+    exerciseCount: exerciseList.length
+  };
+  workoutHistory.unshift(record);
+  // Keep last 100 records
+  if (workoutHistory.length > 100) workoutHistory = workoutHistory.slice(0, 100);
+  localStorage.setItem('fitness-history', JSON.stringify(workoutHistory));
 
   // Show completion screen on top
   completionScreen.className = 'workout-screen active done-phase';
@@ -2050,9 +2251,11 @@ function showCompletion() {
   // Hide workout screen after a frame
   requestAnimationFrame(() => {
     workoutScreen.classList.remove('active');
-    // Start fireworks on completion screen
+    // Start fireworks briefly
     setTimeout(() => {
       startFireworks(document.getElementById('completionFireworks'));
+      // Stop fireworks after a few seconds
+      setTimeout(() => stopFireworks(), 4000);
     }, 200);
   });
 
@@ -2205,6 +2408,47 @@ function exitWorkout() {
   document.getElementById('mainNav').style.display = 'flex';
   currentWorkout = null;
   showPage('plans');
+}
+
+// ===== History =====
+function renderHistory() {
+  const container = document.getElementById('historyList');
+  if (workoutHistory.length === 0) {
+    container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-dim)">
+      <p style="font-size:2em;margin-bottom:12px">📊</p>
+      <p>还没有训练记录</p>
+      <p style="font-size:0.85em;margin-top:8px">完成一次训练后记录会自动保存</p>
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = workoutHistory.map((record, i) => {
+    const d = new Date(record.date);
+    const dateStr = `${d.getMonth()+1}月${d.getDate()}日 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    const durMins = Math.floor(record.duration / 60);
+    const durSecs = record.duration % 60;
+    return `<div class="history-card">
+      <div class="history-card-header">
+        <h3>${escapeHtml(record.planName)}</h3>
+        <span class="history-date">${dateStr}</span>
+      </div>
+      <div class="history-card-stats">
+        <span>⏱ <strong>${durMins}:${String(durSecs).padStart(2,'0')}</strong></span>
+        <span>🏋️ <strong>${record.exerciseCount}</strong>个动作</span>
+        <span>🔄 <strong>${record.totalSets}</strong>组</span>
+      </div>
+      <div class="history-exercises-list">
+        ${record.exercises.map(e => `<span class="history-ex-tag">${escapeHtml(e.name)}</span>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function clearHistory() {
+  if (!confirm('确定要清空所有训练记录吗？')) return;
+  workoutHistory = [];
+  localStorage.setItem('fitness-history', JSON.stringify(workoutHistory));
+  renderHistory();
 }
 
 // ===== Utility =====
