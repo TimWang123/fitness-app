@@ -1,7 +1,7 @@
 {
-  "name": "健身跟练",
-  "short_name": "健身跟练",
-  "description": "全屏健身跟练计时器，告别来回切换",
+  "name": "天枢智元·智练",
+  "short_name": "智练",
+  "description": "全屏跟练计时器，告别计时器和计划之间的切换",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",

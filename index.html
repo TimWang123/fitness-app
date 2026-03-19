@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="健身跟练">
+<meta name="apple-mobile-web-app-title" content="天枢智元·智练">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#FF6B35">
 <meta name="msapplication-navbutton-color" content="#FF6B35">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.svg">
 <link rel="icon" type="image/svg+xml" href="icons/icon-192.svg">
-<title>💪 健身跟练</title>
+<title>天枢智元·智练</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
@@ -956,7 +956,7 @@ body {
 
 <!-- Navigation -->
 <nav class="nav" id="mainNav">
-  <div class="nav-brand" onclick="showPage('home')">💪 健身跟练</div>
+  <div class="nav-brand" onclick="showPage('home')">💪 天枢智元·智练</div>
   <div class="nav-links">
     <button class="nav-link active" onclick="showPage('home')">🏠 <span class="label-text">首页</span></button>
     <button class="nav-link" onclick="showPage('plans')">📋 <span class="label-text">计划</span></button>
@@ -968,7 +968,7 @@ body {
 <!-- Home Page -->
 <div class="page active" id="page-home">
   <div class="hero">
-    <h1>健身跟练</h1>
+    <h1>天枢智元·智练</h1>
     <p>告别计时器和计划之间的来回切换，专注训练</p>
     <div class="action-cards">
       <div class="action-card" onclick="showPage('create');switchTab('manual')">
@@ -1998,8 +1998,9 @@ function loadStep(index) {
   const screen = document.getElementById('workoutScreen');
   const isLast = (index === currentWorkout.steps.length - 1);
 
-  // Phase styling with circular reveal color transition
-  screen.className = 'workout-screen active';
+  // Ensure workout screen is visible (don't reset all classes — causes flicker)
+  screen.classList.add('active');
+  screen.classList.remove('done-phase');
 
   // Get the next color from the non-repeating sequence
   const targetBg = currentWorkout.colorSequence[currentWorkout.colorIndex % currentWorkout.colorSequence.length];
@@ -2017,14 +2018,18 @@ function loadStep(index) {
     revealY = ((rect.top + rect.height / 2) / window.innerHeight * 100) + '%';
   }
 
-  bgReveal.classList.remove('expanding');
+  // If a previous reveal is still expanding, finish it immediately
+  if (bgReveal.classList.contains('expanding')) {
+    bgBase.style.background = bgReveal.style.background;
+    bgReveal.classList.remove('expanding');
+  }
+
   bgReveal.style.background = targetBg;
   bgReveal.style.setProperty('--reveal-x', revealX);
   bgReveal.style.setProperty('--reveal-y', revealY);
   void bgReveal.offsetWidth;
   bgReveal.classList.add('expanding');
-  bgReveal.addEventListener('animationend', function handler() {
-    bgReveal.removeEventListener('animationend', handler);
+  bgReveal.addEventListener('animationend', () => {
     bgBase.style.background = targetBg;
     bgReveal.classList.remove('expanding');
   }, { once: true });
@@ -2103,16 +2108,31 @@ function loadStep(index) {
     hintEl.classList.remove('visible');
   }
 
-  // Next info
-  if (index + 1 < currentWorkout.steps.length) {
-    const next = currentWorkout.steps[index + 1];
-    if (next.type === 'exercise') {
-      nextInfo.textContent = `下一个：${next.name}`;
-    } else {
-      nextInfo.textContent = `下一个：休息 ${next.duration}秒`;
+  // Next info — show the next DIFFERENT exercise, not the next set of the same one
+  const currentName = step.name;
+  let nextDifferentEx = null;
+  for (let i = index + 1; i < currentWorkout.steps.length; i++) {
+    const s = currentWorkout.steps[i];
+    if (s.type === 'exercise' && s.name !== currentName) {
+      nextDifferentEx = s;
+      break;
     }
-  } else {
+  }
+
+  if (nextDifferentEx) {
+    nextInfo.textContent = `下一个动作：${nextDifferentEx.name}`;
+  } else if (index + 1 >= currentWorkout.steps.length) {
     nextInfo.textContent = '最后一项了！加油！💪';
+  } else {
+    // Same exercise continues or only rest left
+    const next = currentWorkout.steps[index + 1];
+    if (next.type === 'exercise' && next.name === currentName) {
+      nextInfo.textContent = `下一组：第 ${next.set} 组`;
+    } else if (next.type === 'set-rest' || next.type === 'rest') {
+      nextInfo.textContent = `休息 ${next.duration}秒后继续`;
+    } else {
+      nextInfo.textContent = '即将完成！💪';
+    }
   }
 
   // Animate name
@@ -2488,7 +2508,7 @@ function showInstallBanner() {
   banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#FF6B35,#FF1744);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;z-index:200;gap:12px;';
   banner.innerHTML = `
     <div style="flex:1">
-      <div style="font-weight:700;font-size:1em">安装「健身跟练」到主屏幕</div>
+      <div style="font-weight:700;font-size:1em">安装「天枢智元·智练」到主屏幕</div>
       <div style="font-size:0.8em;opacity:0.85">离线可用，全屏体验，像原生 App 一样</div>
     </div>
     <button onclick="installApp()" style="padding:8px 20px;border-radius:8px;border:2px solid white;background:rgba(255,255,255,0.2);color:white;font-weight:700;cursor:pointer;white-space:nowrap">安装</button>
