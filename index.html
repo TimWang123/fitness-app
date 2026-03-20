@@ -109,6 +109,29 @@ body {
   border-color: rgba(255,255,255,0.2);
   box-shadow: 0 2px 12px rgba(255,107,53,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
 }
+.lang-switcher {
+  display: flex;
+  gap: 2px;
+  margin-left: 4px;
+  background: rgba(0,0,0,0.04);
+  border-radius: 8px;
+  padding: 2px;
+}
+.lang-btn {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.75em;
+  font-weight: 700;
+  color: var(--text-dim);
+  transition: all 0.2s;
+}
+.lang-btn.active {
+  background: var(--primary);
+  color: white;
+}
 
 /* ===== Pages ===== */
 .page { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
@@ -956,35 +979,40 @@ body {
 
 <!-- Navigation -->
 <nav class="nav" id="mainNav">
-  <div class="nav-brand" onclick="showPage('home')">💪 天枢智元·智练</div>
+  <div class="nav-brand" onclick="showPage('home')">💪 <span data-i18n="app.name">天枢智元·智练</span></div>
   <div class="nav-links">
-    <button class="nav-link active" onclick="showPage('home')">🏠 <span class="label-text">首页</span></button>
-    <button class="nav-link" onclick="showPage('plans')">📋 <span class="label-text">计划</span></button>
-    <button class="nav-link" onclick="showPage('create')">✏️ <span class="label-text">新建</span></button>
-    <button class="nav-link" onclick="showPage('history')">📊 <span class="label-text">记录</span></button>
+    <button class="nav-link active" onclick="showPage('home')">🏠 <span class="label-text" data-i18n="nav.home">首页</span></button>
+    <button class="nav-link" onclick="showPage('plans')">📋 <span class="label-text" data-i18n="nav.plans">计划</span></button>
+    <button class="nav-link" onclick="showPage('create')">✏️ <span class="label-text" data-i18n="nav.create">新建</span></button>
+    <button class="nav-link" onclick="showPage('history')">📊 <span class="label-text" data-i18n="nav.history">记录</span></button>
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="zh" onclick="setLanguage('zh')">中</button>
+      <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
+      <button class="lang-btn" data-lang="es" onclick="setLanguage('es')">ES</button>
+    </div>
   </div>
 </nav>
 
 <!-- Home Page -->
 <div class="page active" id="page-home">
   <div class="hero">
-    <h1>天枢智元·智练</h1>
-    <p>告别计时器和计划之间的来回切换，专注训练</p>
+    <h1 data-i18n="app.name">天枢智元·智练</h1>
+    <p data-i18n="home.subtitle">告别计时器和计划之间的来回切换，专注训练</p>
     <div class="action-cards">
       <div class="action-card" onclick="showPage('create');switchTab('manual')">
         <div class="icon">✏️</div>
-        <h3>手动创建</h3>
-        <p>自定义每个动作、组数和时间</p>
+        <h3 data-i18n="home.manual">手动创建</h3>
+        <p data-i18n="home.manual.desc">自定义每个动作、组数和时间</p>
       </div>
       <div class="action-card" onclick="showPage('create');switchTab('import')">
         <div class="icon">📥</div>
-        <h3>导入计划</h3>
-        <p>粘贴文本快速导入健身计划</p>
+        <h3 data-i18n="home.import">导入计划</h3>
+        <p data-i18n="home.import.desc">粘贴文本快速导入健身计划</p>
       </div>
       <div class="action-card" onclick="showPage('create');switchTab('auto')">
         <div class="icon">🤖</div>
-        <h3>智能定制</h3>
-        <p>根据你的体征生成专属计划</p>
+        <h3 data-i18n="home.auto">智能定制</h3>
+        <p data-i18n="home.auto.desc">根据你的体征生成专属计划</p>
       </div>
     </div>
   </div>
@@ -994,10 +1022,10 @@ body {
 <div class="page" id="page-plans">
   <div class="section-header">
     <div>
-      <h2>我的计划</h2>
-      <div class="subtitle">点击计划开始跟练</div>
+      <h2 data-i18n="plans.title">我的计划</h2>
+      <div class="subtitle" data-i18n="plans.subtitle">点击计划开始跟练</div>
     </div>
-    <button class="btn btn-primary" onclick="showPage('create')">+ 新计划</button>
+    <button class="btn btn-primary" data-i18n="plans.new" onclick="showPage('create')">+ 新计划</button>
   </div>
   <div class="plan-list" id="planList">
     <div style="text-align:center;padding:40px;color:var(--text-dim)">
@@ -1011,83 +1039,80 @@ body {
 <!-- Create Plan Page -->
 <div class="page" id="page-create">
   <div class="section-header">
-    <h2>创建计划</h2>
+    <h2 data-i18n="create.title">创建计划</h2>
   </div>
 
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('manual')" data-tab="manual">手动创建</button>
-    <button class="tab" onclick="switchTab('import')" data-tab="import">导入计划</button>
-    <button class="tab" onclick="switchTab('auto')" data-tab="auto">智能定制</button>
+    <button class="tab active" onclick="switchTab('manual')" data-tab="manual" data-i18n="tab.manual">手动创建</button>
+    <button class="tab" onclick="switchTab('import')" data-tab="import" data-i18n="tab.import">导入计划</button>
+    <button class="tab" onclick="switchTab('auto')" data-tab="auto" data-i18n="tab.auto">智能定制</button>
   </div>
 
   <!-- Manual Create -->
   <div class="tab-content active" id="tab-manual">
     <div class="form-group">
-      <label>计划名称</label>
-      <input type="text" id="planName" placeholder="例如：上肢力量训练日">
+      <label data-i18n="form.planName">计划名称</label>
+      <input type="text" id="planName" data-i18n="form.planName.ph" data-i18n-attr="placeholder" placeholder="例如：上肢力量训练日">
     </div>
 
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <h3>动作列表</h3>
+      <h3 data-i18n="form.exercises">动作列表</h3>
       <div style="display:flex;gap:8px">
-        <button class="btn btn-primary btn-sm" onclick="addExercise()">+ 动作</button>
-        <button class="btn btn-secondary btn-sm" onclick="addRest()">+ 休息</button>
+        <button class="btn btn-primary btn-sm" onclick="addExercise()" data-i18n="form.addExercise">+ 动作</button>
+        <button class="btn btn-secondary btn-sm" onclick="addRest()" data-i18n="form.addRest">+ 休息</button>
       </div>
     </div>
     <div id="exerciseList"></div>
-    <button class="btn btn-accent btn-lg" style="width:100%;margin-top:16px" onclick="savePlan()">保存计划</button>
+    <button class="btn btn-accent btn-lg" style="width:100%;margin-top:16px" onclick="savePlan()" id="savePlanBtn" data-i18n="form.save">保存计划</button>
   </div>
 
   <!-- Import -->
   <div class="tab-content" id="tab-import">
     <div class="import-area">
-      <p style="margin-bottom:12px;font-weight:600">粘贴你的健身计划（支持各种格式）</p>
-      <textarea id="importText" placeholder="直接粘贴你的健身计划，支持各种格式，例如：&#10;&#10;背部 (25min)&#10;1. 哑铃单臂划船 — 4组 × 10-12次/侧，组休90秒&#10;2. 高位下拉（宽握） — 3组 × 12次，组休75秒&#10;&#10;核心 (8min)&#10;1. 悬垂举腿 — 3组 × 10-12次，组休45秒&#10;&#10;收尾有氧 (15min) 椭圆机"></textarea>
+      <p style="margin-bottom:12px;font-weight:600" data-i18n="import.instruction">粘贴你的健身计划（支持各种格式）</p>
+      <textarea id="importText" data-i18n="import.placeholder" data-i18n-attr="placeholder" placeholder="直接粘贴你的健身计划，支持各种格式"></textarea>
       <div class="import-format">
-        <p><strong>智能识别以下格式：</strong></p>
+        <p><strong data-i18n="import.format">智能识别以下格式：</strong></p>
         <p><code>动作名 — 4组 × 12次，组休60秒</code></p>
         <p><code>动作名 3组 10次 45秒</code></p>
-        <p><code>椭圆机5分钟</code> <code>肩胛骨绕环10次</code></p>
-        <p>分区标题如 <code>背部 (25min)</code> 会自动跳过</p>
-        <p>💡 提示行会自动跳过</p>
       </div>
     </div>
     <div class="form-group">
-      <label>计划名称</label>
-      <input type="text" id="importPlanName" placeholder="给导入的计划起个名字">
+      <label data-i18n="import.name">计划名称</label>
+      <input type="text" id="importPlanName" data-i18n="import.name.ph" data-i18n-attr="placeholder" placeholder="给导入的计划起个名字">
     </div>
-    <button class="btn btn-accent btn-lg" style="width:100%" onclick="importPlan()">导入并保存</button>
+    <button class="btn btn-accent btn-lg" style="width:100%" onclick="importPlan()" data-i18n="import.save">导入并保存</button>
   </div>
 
   <!-- Auto Generate -->
   <div class="tab-content" id="tab-auto">
     <div class="body-form">
-      <h3 style="margin-bottom:16px">填写你的体征信息</h3>
+      <h3 style="margin-bottom:16px" data-i18n="auto.title">填写你的体征信息</h3>
       <div class="form-row">
         <div class="form-group">
-          <label>性别</label>
+          <label data-i18n="auto.gender">性别</label>
           <select id="autoGender">
             <option value="male">男</option>
             <option value="female">女</option>
           </select>
         </div>
         <div class="form-group">
-          <label>年龄</label>
+          <label data-i18n="auto.age">年龄</label>
           <input type="number" id="autoAge" placeholder="25" min="10" max="80">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>身高 (cm)</label>
+          <label data-i18n="auto.height">身高 (cm)</label>
           <input type="number" id="autoHeight" placeholder="175" min="100" max="250">
         </div>
         <div class="form-group">
-          <label>体重 (kg)</label>
+          <label data-i18n="auto.weight">体重 (kg)</label>
           <input type="number" id="autoWeight" placeholder="70" min="30" max="200">
         </div>
       </div>
       <div class="form-group">
-        <label>健身经验</label>
+        <label data-i18n="auto.level">健身经验</label>
         <select id="autoLevel">
           <option value="beginner">新手（0-6个月）</option>
           <option value="intermediate">中级（6个月-2年）</option>
@@ -1095,36 +1120,36 @@ body {
         </select>
       </div>
       <div class="form-group">
-        <label>训练目标</label>
+        <label data-i18n="auto.goal">训练目标</label>
         <div class="goal-options" id="goalOptions">
           <div class="goal-option" onclick="selectGoal(this, 'muscle')" data-goal="muscle">
             <div class="goal-icon">💪</div>
-            <div class="goal-name">增肌</div>
+            <div class="goal-name" data-i18n="goal.muscle">增肌</div>
           </div>
           <div class="goal-option" onclick="selectGoal(this, 'fat-loss')" data-goal="fat-loss">
             <div class="goal-icon">🔥</div>
-            <div class="goal-name">减脂</div>
+            <div class="goal-name" data-i18n="goal.fat-loss">减脂</div>
           </div>
           <div class="goal-option" onclick="selectGoal(this, 'strength')" data-goal="strength">
             <div class="goal-icon">🏋️</div>
-            <div class="goal-name">力量</div>
+            <div class="goal-name" data-i18n="goal.strength">力量</div>
           </div>
           <div class="goal-option" onclick="selectGoal(this, 'endurance')" data-goal="endurance">
             <div class="goal-icon">🏃</div>
-            <div class="goal-name">耐力</div>
+            <div class="goal-name" data-i18n="goal.endurance">耐力</div>
           </div>
           <div class="goal-option" onclick="selectGoal(this, 'flexibility')" data-goal="flexibility">
             <div class="goal-icon">🧘</div>
-            <div class="goal-name">柔韧</div>
+            <div class="goal-name" data-i18n="goal.flexibility">柔韧</div>
           </div>
           <div class="goal-option" onclick="selectGoal(this, 'overall')" data-goal="overall">
             <div class="goal-icon">⚡</div>
-            <div class="goal-name">综合</div>
+            <div class="goal-name" data-i18n="goal.overall">综合</div>
           </div>
         </div>
       </div>
       <div class="form-group">
-        <label>可用器材</label>
+        <label data-i18n="auto.equipment">可用器材</label>
         <select id="autoEquipment">
           <option value="none">无器材（徒手）</option>
           <option value="basic">基础器材（哑铃+弹力带）</option>
@@ -1132,11 +1157,11 @@ body {
         </select>
       </div>
       <div class="form-group">
-        <label>训练时长（分钟）</label>
+        <label data-i18n="auto.duration">训练时长（分钟）</label>
         <input type="number" id="autoDuration" placeholder="45" min="15" max="120" value="45">
       </div>
     </div>
-    <button class="btn btn-accent btn-lg" style="width:100%;margin-top:16px" onclick="generatePlan()">🤖 生成专属计划</button>
+    <button class="btn btn-accent btn-lg" style="width:100%;margin-top:16px" onclick="generatePlan()" data-i18n="auto.generate">🤖 生成专属计划</button>
   </div>
 </div>
 
@@ -1144,10 +1169,10 @@ body {
 <div class="page" id="page-history">
   <div class="section-header">
     <div>
-      <h2>训练记录</h2>
-      <div class="subtitle">记录你的每一次努力</div>
+      <h2 data-i18n="history.title">训练记录</h2>
+      <div class="subtitle" data-i18n="history.subtitle">记录你的每一次努力</div>
     </div>
-    <button class="btn btn-danger btn-sm" onclick="clearHistory()">清空记录</button>
+    <button class="btn btn-danger btn-sm" onclick="clearHistory()" data-i18n="history.clear">清空记录</button>
   </div>
   <div id="historyList">
     <div style="text-align:center;padding:40px;color:var(--text-dim)">
@@ -1180,7 +1205,7 @@ body {
 
   <!-- Main content -->
   <div class="workout-content">
-    <div class="workout-phase-label" id="workoutPhaseLabel">运动中</div>
+    <div class="workout-phase-label" id="workoutPhaseLabel" data-i18n="workout.exercising">运动中</div>
     <div class="workout-exercise-name slide-in" id="workoutExerciseName">深蹲</div>
     <div class="workout-exercise-detail" id="workoutExerciseDetail">4组 × 12次</div>
     <div class="workout-hint" id="workoutHint"></div>
@@ -1188,7 +1213,7 @@ body {
     <div class="workout-set-info" id="workoutSetInfo">第 1 组 / 共 4 组</div>
 
     <!-- "Done" button for count-based exercises -->
-    <button class="workout-done-btn" id="workoutDoneBtn" onclick="markDone()" style="display:none">✓ 完成</button>
+    <button class="workout-done-btn" id="workoutDoneBtn" onclick="markDone()" style="display:none" data-i18n="workout.done">✓ 完成</button>
   </div>
 
   <!-- Bottom area -->
@@ -1200,7 +1225,7 @@ body {
       <button class="workout-btn" id="nextBtn" onclick="nextStep()">⏭</button>
     </div>
     <!-- Celebration button (hidden, appears after last step) -->
-    <button class="celebrate-btn" id="celebrateBtn" style="display:none" onclick="showCompletion()">🎉 训练完成！</button>
+    <button class="celebrate-btn" id="celebrateBtn" style="display:none" onclick="showCompletion()" data-i18n="workout.celebrate">🎉 训练完成！</button>
   </div>
 
   <!-- Fireworks canvas -->
@@ -1213,25 +1238,25 @@ body {
   <div class="completion-report" id="completionReport">
     <div class="completion-header">
       <div style="font-size:3em;margin-bottom:8px">🎉</div>
-      <h2>训练完成！</h2>
+      <h2 data-i18n="complete.title">训练完成！</h2>
       <p class="completion-date" id="completionDate"></p>
     </div>
     <div class="completion-stats" id="completionStats">
       <div class="stat-item">
         <div class="stat-value" id="statDuration">0:00</div>
-        <div class="stat-label">总时长</div>
+        <div class="stat-label" data-i18n="complete.duration">总时长</div>
       </div>
       <div class="stat-item">
         <div class="stat-value" id="statExercises">0</div>
-        <div class="stat-label">完成动作</div>
+        <div class="stat-label" data-i18n="complete.exercises">完成动作</div>
       </div>
       <div class="stat-item">
         <div class="stat-value" id="statSets">0</div>
-        <div class="stat-label">完成组数</div>
+        <div class="stat-label" data-i18n="complete.sets">完成组数</div>
       </div>
     </div>
     <div class="completion-exercises" id="completionExercises"></div>
-    <button class="btn btn-primary btn-lg" style="width:100%;margin-top:20px" onclick="exitWorkout()">返回首页</button>
+    <button class="btn btn-primary btn-lg" style="width:100%;margin-top:20px" onclick="exitWorkout()" data-i18n="complete.home">返回首页</button>
   </div>
 </div>
 
@@ -1241,13 +1266,267 @@ body {
     <h3 id="confirmTitle">确认</h3>
     <p id="confirmMsg" style="margin-bottom:20px;color:var(--text-dim)"></p>
     <div style="display:flex;gap:10px;justify-content:flex-end">
-      <button class="btn btn-ghost" onclick="closeModal()">取消</button>
-      <button class="btn btn-danger" id="confirmBtn" onclick="">确认</button>
+      <button class="btn btn-ghost" onclick="closeModal()" data-i18n="modal.cancel">取消</button>
+      <button class="btn btn-danger" id="confirmBtn" onclick="" data-i18n="modal.confirm">确认</button>
     </div>
   </div>
 </div>
 
 <script>
+// ===== i18n System =====
+const TRANSLATIONS = {
+zh: {
+  'app.name': '天枢智元·智练',
+  'nav.home': '首页', 'nav.plans': '计划', 'nav.create': '新建', 'nav.history': '记录', 'nav.lang': '语言',
+  'home.subtitle': '告别计时器和计划之间的来回切换，专注训练',
+  'home.manual': '手动创建', 'home.manual.desc': '自定义每个动作、组数和时间',
+  'home.import': '导入计划', 'home.import.desc': '粘贴文本快速导入健身计划',
+  'home.auto': '智能定制', 'home.auto.desc': '根据你的体征生成专属计划',
+  'plans.title': '我的计划', 'plans.subtitle': '点击计划开始跟练', 'plans.new': '+ 新计划',
+  'plans.empty': '还没有健身计划', 'plans.empty.desc': '创建或导入一个计划开始训练吧',
+  'plans.stats': '{exercises}个动作 · {sets}组 · 约{mins}分钟',
+  'plans.edit': '编辑', 'plans.delete': '删除',
+  'plans.delete.title': '删除计划', 'plans.delete.msg': '确定要删除「{name}」吗？',
+  'create.title': '创建计划', 'tab.manual': '手动创建', 'tab.import': '导入计划', 'tab.auto': '智能定制',
+  'form.planName': '计划名称', 'form.planName.ph': '例如：上肢力量训练日',
+  'form.exercises': '动作列表', 'form.addExercise': '+ 动作', 'form.addRest': '+ 休息',
+  'form.save': '保存计划', 'form.update': '更新计划',
+  'form.exName': '动作名称', 'form.sets': '组数', 'form.reps': '次数',
+  'form.duration': '每组(秒)', 'form.restBetween': '组间休息(秒)', 'form.rest': '组间休息', 'form.sec': '秒',
+  'form.unnamed': '未命名动作',
+  'import.instruction': '粘贴你的健身计划（支持各种格式）',
+  'import.placeholder': '直接粘贴你的健身计划，支持各种格式，例如：\n\n背部 (25min)\n1. 哑铃单臂划船 — 4组 × 10-12次/侧，组休90秒\n2. 高位下拉（宽握） — 3组 × 12次，组休75秒',
+  'import.format': '智能识别以下格式：',
+  'import.name': '计划名称', 'import.name.ph': '给导入的计划起个名字',
+  'import.save': '导入并保存', 'import.noResult': '未识别到有效动作，请检查格式',
+  'auto.title': '填写你的体征信息',
+  'auto.gender': '性别', 'auto.male': '男', 'auto.female': '女',
+  'auto.age': '年龄', 'auto.height': '身高 (cm)', 'auto.weight': '体重 (kg)',
+  'auto.level': '健身经验',
+  'auto.beginner': '新手（0-6个月）', 'auto.intermediate': '中级（6个月-2年）', 'auto.advanced': '高级（2年以上）',
+  'auto.goal': '训练目标',
+  'goal.muscle': '增肌', 'goal.fat-loss': '减脂', 'goal.strength': '力量',
+  'goal.endurance': '耐力', 'goal.flexibility': '柔韧', 'goal.overall': '综合',
+  'auto.equipment': '可用器材',
+  'equip.none': '无器材（徒手）', 'equip.basic': '基础器材（哑铃+弹力带）', 'equip.gym': '健身房（全器材）',
+  'auto.duration': '训练时长（分钟）', 'auto.generate': '🤖 生成专属计划',
+  'auto.planName': '{goal}训练 · {level}',
+  'auto.level.beginner': '新手', 'auto.level.intermediate': '中级', 'auto.level.advanced': '高级',
+  'history.title': '训练记录', 'history.subtitle': '记录你的每一次努力',
+  'history.clear': '清空记录', 'history.clearConfirm': '确定要清空所有训练记录吗？',
+  'history.empty': '还没有训练记录', 'history.empty.desc': '完成一次训练后记录会自动保存',
+  'history.exercises': '个动作', 'history.sets': '组',
+  'workout.exercising': '🔥 运动中', 'workout.rest': '😌 休息',
+  'workout.repsPerSet': '{reps}次/组', 'workout.reps': '{reps} 次',
+  'workout.setInfo': '第 {current} 组 / 共 {total} 组',
+  'workout.done': '✓ 完成',
+  'workout.changeRest': '换动作休息', 'workout.restLabel': '休息一下',
+  'workout.nextExercise': '下一个：{name}', 'workout.prepareNext': '准备下一个动作',
+  'workout.nextDiff': '下一个动作：{name}', 'workout.lastItem': '最后一项了！加油！💪',
+  'workout.nextSet': '下一组：第 {set} 组', 'workout.restThen': '休息 {duration}秒后继续',
+  'workout.almostDone': '即将完成！💪',
+  'workout.congrats': '🎉 恭喜！', 'workout.allDone': '全部完成！',
+  'workout.celebrate': '🎉 训练完成！',
+  'workout.sound.on': '🔊', 'workout.sound.off': '🔇',
+  'complete.title': '训练完成！', 'complete.duration': '总时长', 'complete.exercises': '完成动作', 'complete.sets': '完成组数',
+  'complete.detail': '训练详情', 'complete.home': '返回首页',
+  'complete.exSummary': '{sets}组{reps}',
+  'modal.confirm': '确认', 'modal.cancel': '取消',
+  'alert.needName': '请输入计划名称', 'alert.needExercise': '请至少添加一个动作',
+  'alert.needText': '请粘贴健身计划', 'alert.needInfo': '请填写完整体征信息', 'alert.needGoal': '请选择训练目标',
+  'install.title': '安装「天枢智元·智练」到主屏幕',
+  'install.desc': '离线可用，全屏体验，像原生 App 一样', 'install.btn': '安装',
+  'rest.name': '休息', 'rest.change': '换动作休息',
+},
+en: {
+  'app.name': 'FitFlow',
+  'nav.home': 'Home', 'nav.plans': 'Plans', 'nav.create': 'Create', 'nav.history': 'History', 'nav.lang': 'Lang',
+  'home.subtitle': 'Stop switching between timer and workout plan — stay focused',
+  'home.manual': 'Manual', 'home.manual.desc': 'Customize exercises, sets, and timing',
+  'home.import': 'Import', 'home.import.desc': 'Paste text to quickly import workout plans',
+  'home.auto': 'AI Generate', 'home.auto.desc': 'Generate a plan based on your body profile',
+  'plans.title': 'My Plans', 'plans.subtitle': 'Tap a plan to start', 'plans.new': '+ New Plan',
+  'plans.empty': 'No workout plans yet', 'plans.empty.desc': 'Create or import a plan to get started',
+  'plans.stats': '{exercises} exercises · {sets} sets · ~{mins} min',
+  'plans.edit': 'Edit', 'plans.delete': 'Delete',
+  'plans.delete.title': 'Delete Plan', 'plans.delete.msg': 'Delete "{name}"?',
+  'create.title': 'Create Plan', 'tab.manual': 'Manual', 'tab.import': 'Import', 'tab.auto': 'AI Generate',
+  'form.planName': 'Plan Name', 'form.planName.ph': 'e.g. Upper Body Strength Day',
+  'form.exercises': 'Exercises', 'form.addExercise': '+ Exercise', 'form.addRest': '+ Rest',
+  'form.save': 'Save Plan', 'form.update': 'Update Plan',
+  'form.exName': 'Exercise name', 'form.sets': 'Sets', 'form.reps': 'Reps',
+  'form.duration': 'Sec/set', 'form.restBetween': 'Rest(sec)', 'form.rest': 'Rest', 'form.sec': 'sec',
+  'form.unnamed': 'Unnamed exercise',
+  'import.instruction': 'Paste your workout plan (supports various formats)',
+  'import.placeholder': 'Paste your workout plan here, e.g.:\n\nBack (25min)\n1. Dumbbell Row — 4 sets × 10-12 reps, 90s rest\n2. Lat Pulldown — 3 sets × 12 reps, 75s rest',
+  'import.format': 'Smart parser recognizes:',
+  'import.name': 'Plan Name', 'import.name.ph': 'Name your imported plan',
+  'import.save': 'Import & Save', 'import.noResult': 'No exercises detected. Please check the format.',
+  'auto.title': 'Enter Your Body Profile',
+  'auto.gender': 'Gender', 'auto.male': 'Male', 'auto.female': 'Female',
+  'auto.age': 'Age', 'auto.height': 'Height (cm)', 'auto.weight': 'Weight (kg)',
+  'auto.level': 'Experience',
+  'auto.beginner': 'Beginner (0-6 months)', 'auto.intermediate': 'Intermediate (6mo-2yr)', 'auto.advanced': 'Advanced (2+ years)',
+  'auto.goal': 'Training Goal',
+  'goal.muscle': 'Muscle', 'goal.fat-loss': 'Fat Loss', 'goal.strength': 'Strength',
+  'goal.endurance': 'Endurance', 'goal.flexibility': 'Flexibility', 'goal.overall': 'Overall',
+  'auto.equipment': 'Equipment',
+  'equip.none': 'No equipment (bodyweight)', 'equip.basic': 'Basic (dumbbells + bands)', 'equip.gym': 'Full gym',
+  'auto.duration': 'Duration (minutes)', 'auto.generate': '🤖 Generate Plan',
+  'auto.planName': '{goal} Training · {level}',
+  'auto.level.beginner': 'Beginner', 'auto.level.intermediate': 'Intermediate', 'auto.level.advanced': 'Advanced',
+  'history.title': 'History', 'history.subtitle': 'Track every effort',
+  'history.clear': 'Clear All', 'history.clearConfirm': 'Clear all workout history?',
+  'history.empty': 'No workout history', 'history.empty.desc': 'Records are saved automatically after each workout',
+  'history.exercises': ' exercises', 'history.sets': ' sets',
+  'workout.exercising': '🔥 Go!', 'workout.rest': '😌 Rest',
+  'workout.repsPerSet': '{reps} reps/set', 'workout.reps': '{reps} reps',
+  'workout.setInfo': 'Set {current} / {total}',
+  'workout.done': '✓ Done',
+  'workout.changeRest': 'Switch Rest', 'workout.restLabel': 'Rest',
+  'workout.nextExercise': 'Next: {name}', 'workout.prepareNext': 'Get ready for next',
+  'workout.nextDiff': 'Next exercise: {name}', 'workout.lastItem': 'Last one! Push it! 💪',
+  'workout.nextSet': 'Next: Set {set}', 'workout.restThen': 'Rest {duration}s then continue',
+  'workout.almostDone': 'Almost done! 💪',
+  'workout.congrats': '🎉 Congrats!', 'workout.allDone': 'All Done!',
+  'workout.celebrate': '🎉 Workout Complete!',
+  'workout.sound.on': '🔊', 'workout.sound.off': '🔇',
+  'complete.title': 'Workout Complete!', 'complete.duration': 'Duration', 'complete.exercises': 'Exercises', 'complete.sets': 'Total Sets',
+  'complete.detail': 'Exercise Details', 'complete.home': 'Back to Home',
+  'complete.exSummary': '{sets} sets{reps}',
+  'modal.confirm': 'Confirm', 'modal.cancel': 'Cancel',
+  'alert.needName': 'Please enter a plan name', 'alert.needExercise': 'Please add at least one exercise',
+  'alert.needText': 'Please paste a workout plan', 'alert.needInfo': 'Please fill in all body info', 'alert.needGoal': 'Please select a goal',
+  'install.title': 'Install FitFlow to home screen',
+  'install.desc': 'Works offline, full-screen, feels like a native app', 'install.btn': 'Install',
+  'rest.name': 'Rest', 'rest.change': 'Switch Rest',
+},
+es: {
+  'app.name': 'FitFlow',
+  'nav.home': 'Inicio', 'nav.plans': 'Planes', 'nav.create': 'Crear', 'nav.history': 'Historial', 'nav.lang': 'Idioma',
+  'home.subtitle': 'Deja de alternar entre temporizador y plan — enfócate en entrenar',
+  'home.manual': 'Manual', 'home.manual.desc': 'Personaliza ejercicios, series y tiempos',
+  'home.import': 'Importar', 'home.import.desc': 'Pega texto para importar tu plan',
+  'home.auto': 'IA Generar', 'home.auto.desc': 'Genera un plan según tu perfil corporal',
+  'plans.title': 'Mis Planes', 'plans.subtitle': 'Toca un plan para empezar', 'plans.new': '+ Nuevo Plan',
+  'plans.empty': 'Aún no hay planes', 'plans.empty.desc': 'Crea o importa un plan para empezar',
+  'plans.stats': '{exercises} ejercicios · {sets} series · ~{mins} min',
+  'plans.edit': 'Editar', 'plans.delete': 'Eliminar',
+  'plans.delete.title': 'Eliminar Plan', 'plans.delete.msg': '¿Eliminar "{name}"?',
+  'create.title': 'Crear Plan', 'tab.manual': 'Manual', 'tab.import': 'Importar', 'tab.auto': 'IA Generar',
+  'form.planName': 'Nombre del plan', 'form.planName.ph': 'Ej: Día de fuerza superior',
+  'form.exercises': 'Ejercicios', 'form.addExercise': '+ Ejercicio', 'form.addRest': '+ Descanso',
+  'form.save': 'Guardar Plan', 'form.update': 'Actualizar Plan',
+  'form.exName': 'Nombre del ejercicio', 'form.sets': 'Series', 'form.reps': 'Reps',
+  'form.duration': 'Seg/serie', 'form.restBetween': 'Descanso(seg)', 'form.rest': 'Descanso', 'form.sec': 'seg',
+  'form.unnamed': 'Sin nombre',
+  'import.instruction': 'Pega tu plan de entrenamiento (soporta varios formatos)',
+  'import.placeholder': 'Pega tu plan aquí, ejemplo:\n\nEspalda (25min)\n1. Remo con mancuerna — 4 series × 10-12 reps, 90s descanso',
+  'import.format': 'Formatos reconocidos:',
+  'import.name': 'Nombre del plan', 'import.name.ph': 'Nombra tu plan importado',
+  'import.save': 'Importar y Guardar', 'import.noResult': 'No se detectaron ejercicios. Revisa el formato.',
+  'auto.title': 'Ingresa tu perfil corporal',
+  'auto.gender': 'Género', 'auto.male': 'Hombre', 'auto.female': 'Mujer',
+  'auto.age': 'Edad', 'auto.height': 'Altura (cm)', 'auto.weight': 'Peso (kg)',
+  'auto.level': 'Experiencia',
+  'auto.beginner': 'Principiante (0-6 meses)', 'auto.intermediate': 'Intermedio (6m-2 años)', 'auto.advanced': 'Avanzado (2+ años)',
+  'auto.goal': 'Objetivo',
+  'goal.muscle': 'Músculo', 'goal.fat-loss': 'Quemar grasa', 'goal.strength': 'Fuerza',
+  'goal.endurance': 'Resistencia', 'goal.flexibility': 'Flexibilidad', 'goal.overall': 'General',
+  'auto.equipment': 'Equipo',
+  'equip.none': 'Sin equipo (cuerpo)', 'equip.basic': 'Básico (mancuernas + bandas)', 'equip.gym': 'Gimnasio completo',
+  'auto.duration': 'Duración (minutos)', 'auto.generate': '🤖 Generar Plan',
+  'auto.planName': 'Entrenamiento {goal} · {level}',
+  'auto.level.beginner': 'Principiante', 'auto.level.intermediate': 'Intermedio', 'auto.level.advanced': 'Avanzado',
+  'history.title': 'Historial', 'history.subtitle': 'Registra cada esfuerzo',
+  'history.clear': 'Borrar todo', 'history.clearConfirm': '¿Borrar todo el historial?',
+  'history.empty': 'Sin historial', 'history.empty.desc': 'Los registros se guardan automáticamente al terminar',
+  'history.exercises': ' ejercicios', 'history.sets': ' series',
+  'workout.exercising': '🔥 ¡Vamos!', 'workout.rest': '😌 Descanso',
+  'workout.repsPerSet': '{reps} reps/serie', 'workout.reps': '{reps} reps',
+  'workout.setInfo': 'Serie {current} / {total}',
+  'workout.done': '✓ Listo',
+  'workout.changeRest': 'Cambio', 'workout.restLabel': 'Descanso',
+  'workout.nextExercise': 'Siguiente: {name}', 'workout.prepareNext': 'Prepárate',
+  'workout.nextDiff': 'Siguiente: {name}', 'workout.lastItem': '¡Último! ¡Tú puedes! 💪',
+  'workout.nextSet': 'Siguiente: Serie {set}', 'workout.restThen': 'Descanso {duration}s',
+  'workout.almostDone': '¡Casi listo! 💪',
+  'workout.congrats': '🎉 ¡Felicidades!', 'workout.allDone': '¡Terminado!',
+  'workout.celebrate': '🎉 ¡Entrenamiento completo!',
+  'workout.sound.on': '🔊', 'workout.sound.off': '🔇',
+  'complete.title': '¡Entrenamiento completo!', 'complete.duration': 'Duración', 'complete.exercises': 'Ejercicios', 'complete.sets': 'Series',
+  'complete.detail': 'Detalles', 'complete.home': 'Volver al inicio',
+  'complete.exSummary': '{sets} series{reps}',
+  'modal.confirm': 'Confirmar', 'modal.cancel': 'Cancelar',
+  'alert.needName': 'Ingresa un nombre', 'alert.needExercise': 'Agrega al menos un ejercicio',
+  'alert.needText': 'Pega un plan', 'alert.needInfo': 'Completa todos los datos', 'alert.needGoal': 'Selecciona un objetivo',
+  'install.title': 'Instalar FitFlow',
+  'install.desc': 'Sin conexión, pantalla completa, como app nativa', 'install.btn': 'Instalar',
+  'rest.name': 'Descanso', 'rest.change': 'Cambio',
+}
+};
+
+let currentLang = localStorage.getItem('app-lang') || 'zh';
+
+function t(key, params) {
+  const lang = TRANSLATIONS[currentLang] || TRANSLATIONS.zh;
+  let str = lang[key] || TRANSLATIONS.zh[key] || key;
+  if (params) {
+    Object.keys(params).forEach(k => {
+      str = str.replace('{' + k + '}', params[k]);
+    });
+  }
+  return str;
+}
+
+function setLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('app-lang', lang);
+  applyLanguage();
+}
+
+function applyLanguage() {
+  // Static elements with data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const attr = el.getAttribute('data-i18n-attr');
+    if (attr === 'placeholder') {
+      el.placeholder = t(key);
+    } else {
+      el.textContent = t(key);
+    }
+  });
+  // Update page title
+  document.title = t('app.name');
+  // Update dynamic select options
+  const levelSel = document.getElementById('autoLevel');
+  if (levelSel) {
+    levelSel.options[0].text = t('auto.beginner');
+    levelSel.options[1].text = t('auto.intermediate');
+    levelSel.options[2].text = t('auto.advanced');
+  }
+  const genderSel = document.getElementById('autoGender');
+  if (genderSel) {
+    genderSel.options[0].text = t('auto.male');
+    genderSel.options[1].text = t('auto.female');
+  }
+  const equipSel = document.getElementById('autoEquipment');
+  if (equipSel) {
+    equipSel.options[0].text = t('equip.none');
+    equipSel.options[1].text = t('equip.basic');
+    equipSel.options[2].text = t('equip.gym');
+  }
+  // Re-render dynamic sections
+  renderPlans();
+  if (document.getElementById('page-history').classList.contains('active')) {
+    renderHistory();
+  }
+  // Update language selector highlight
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === currentLang);
+  });
+}
+
 // ===== State =====
 let plans = JSON.parse(localStorage.getItem('fitness-plans') || '[]');
 let workoutHistory = JSON.parse(localStorage.getItem('fitness-history') || '[]');
@@ -1280,7 +1559,7 @@ function beep(freq = 800, duration = 150, count = 1) {
 
 function toggleSound() {
   soundEnabled = !soundEnabled;
-  document.getElementById('soundToggle').textContent = soundEnabled ? '🔊 提示音' : '🔇 静音';
+  document.getElementById('soundToggle').textContent = soundEnabled ? t('workout.sound.on') : t('workout.sound.off');
 }
 
 // ===== Navigation =====
@@ -1314,8 +1593,8 @@ function renderPlans() {
   if (plans.length === 0) {
     list.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-dim)">
       <p style="font-size:2em;margin-bottom:12px">📋</p>
-      <p>还没有健身计划</p>
-      <p style="font-size:0.85em;margin-top:8px">创建或导入一个计划开始训练吧</p>
+      <p>${t('plans.empty')}</p>
+      <p style="font-size:0.85em;margin-top:8px">${t('plans.empty.desc')}</p>
     </div>`;
     return;
   }
@@ -1330,19 +1609,19 @@ function renderPlans() {
     return `<div class="plan-card" onclick="startWorkout(${i})">
       <div class="plan-info">
         <h3>${escapeHtml(plan.name)}</h3>
-        <p>${exerciseCount}个动作 · ${totalSets}组 · 约${mins}分钟</p>
+        <p>${t('plans.stats', {exercises: exerciseCount, sets: totalSets, mins})}</p>
       </div>
       <div class="plan-actions">
-        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();editPlan(${i})">编辑</button>
-        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deletePlan(${i})">删除</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();editPlan(${i})">${t('plans.edit')}</button>
+        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deletePlan(${i})">${t('plans.delete')}</button>
       </div>
     </div>`;
   }).join('');
 }
 
 function deletePlan(index) {
-  document.getElementById('confirmTitle').textContent = '删除计划';
-  document.getElementById('confirmMsg').textContent = `确定要删除「${plans[index].name}」吗？`;
+  document.getElementById('confirmTitle').textContent = t('plans.delete.title');
+  document.getElementById('confirmMsg').textContent = t('plans.delete.msg', {name: plans[index].name});
   document.getElementById('confirmBtn').onclick = () => {
     plans.splice(index, 1);
     savePlans();
@@ -1368,7 +1647,7 @@ function editPlan(index) {
   });
   // Replace save function temporarily
   const saveBtn = document.querySelector('#tab-manual .btn-accent');
-  saveBtn.textContent = '更新计划';
+  saveBtn.textContent = t('form.update');
   saveBtn.onclick = () => {
     const updated = collectPlanFromForm();
     if (!updated) return;
@@ -1397,12 +1676,12 @@ function addExercise(name = '', sets = 4, reps = 12, duration = 45, restBetween 
   div.innerHTML = `
     <div class="num">${document.querySelectorAll('#exerciseList .exercise-item').length + 1}</div>
     <div class="details" style="flex:1">
-      <input type="text" value="${escapeHtml(name)}" placeholder="动作名称" style="background:transparent;border:none;color:var(--text);font-weight:700;font-size:1em;width:100%;margin-bottom:6px;outline:none;padding:0">
+      <input type="text" value="${escapeHtml(name)}" placeholder="${t('form.exName')}" style="background:transparent;border:none;color:var(--text);font-weight:700;font-size:1em;width:100%;margin-bottom:6px;outline:none;padding:0">
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <label style="font-size:0.75em;color:var(--text-dim)">组数<input type="number" value="${sets}" min="1" max="20" style="width:50px;padding:4px;margin-left:4px;background:rgba(255,255,255,0.5);border:1px solid rgba(0,0,0,0.08);border-radius:6px;color:var(--text);font-size:0.95em"></label>
-        <label style="font-size:0.75em;color:var(--text-dim)">次数<input type="number" value="${reps}" min="1" max="100" style="width:50px;padding:4px;margin-left:4px;background:rgba(255,255,255,0.5);border:1px solid rgba(0,0,0,0.08);border-radius:6px;color:var(--text);font-size:0.95em"></label>
-        <label style="font-size:0.75em;color:var(--text-dim)">每组(秒)<input type="number" value="${duration}" min="5" max="600" style="width:60px;padding:4px;margin-left:4px;background:rgba(255,255,255,0.5);border:1px solid rgba(0,0,0,0.08);border-radius:6px;color:var(--text);font-size:0.95em"></label>
-        <label style="font-size:0.75em;color:var(--text-dim)">组间休息(秒)<input type="number" value="${restBetween}" min="0" max="300" style="width:60px;padding:4px;margin-left:4px;background:rgba(255,255,255,0.5);border:1px solid rgba(0,0,0,0.08);border-radius:6px;color:var(--text);font-size:0.95em"></label>
+        <label style="font-size:0.75em;color:var(--text-dim)">${t('form.sets')}<input type="number" value="${sets}" min="1" max="20" style="width:50px;padding:4px;margin-left:4px;background:rgba(255,255,255,0.5);border:1px solid rgba(0,0,0,0.08);border-radius:6px;color:var(--text);font-size:0.95em"></label>
+        <label style="font-size:0.75em;color:var(--text-dim)">${t('form.reps')}<input type="number" value="${reps}" min="1" max="100" style="width:50px;padding:4px;margin-left:4px;background:rgba(255,255,255,0.5);border:1px solid rgba(0,0,0,0.08);border-radius:6px;color:var(--text);font-size:0.95em"></label>
+        <label style="font-size:0.75em;color:var(--text-dim)">${t('form.duration')}<input type="number" value="${duration}" min="5" max="600" style="width:60px;padding:4px;margin-left:4px;background:rgba(255,255,255,0.5);border:1px solid rgba(0,0,0,0.08);border-radius:6px;color:var(--text);font-size:0.95em"></label>
+        <label style="font-size:0.75em;color:var(--text-dim)">${t('form.restBetween')}<input type="number" value="${restBetween}" min="0" max="300" style="width:60px;padding:4px;margin-left:4px;background:rgba(255,255,255,0.5);border:1px solid rgba(0,0,0,0.08);border-radius:6px;color:var(--text);font-size:0.95em"></label>
       </div>
     </div>
     <button class="remove-btn" onclick="removeExercise(this)">✕</button>
@@ -1419,8 +1698,8 @@ function addRest(duration = 60) {
   div.innerHTML = `
     <div class="num">～</div>
     <div class="details" style="flex:1;display:flex;align-items:center;gap:8px">
-      <span style="font-weight:700;color:var(--secondary)">组间休息</span>
-      <label style="font-size:0.8em;color:var(--text-dim)"><input type="number" value="${duration}" min="5" max="600" style="width:60px;padding:4px;margin-left:4px;background:rgba(255,255,255,0.5);border:1px solid rgba(0,0,0,0.08);border-radius:6px;color:var(--text)"> 秒</label>
+      <span style="font-weight:700;color:var(--secondary)">${t('form.rest')}</span>
+      <label style="font-size:0.8em;color:var(--text-dim)"><input type="number" value="${duration}" min="5" max="600" style="width:60px;padding:4px;margin-left:4px;background:rgba(255,255,255,0.5);border:1px solid rgba(0,0,0,0.08);border-radius:6px;color:var(--text)"> ${t('form.sec')}</label>
     </div>
     <button class="remove-btn" onclick="removeExercise(this)">✕</button>
   `;
@@ -1443,16 +1722,16 @@ function renumberExercises() {
 
 function collectPlanFromForm() {
   const name = document.getElementById('planName').value.trim();
-  if (!name) { alert('请输入计划名称'); return null; }
+  if (!name) { alert(t('alert.needName')); return null; }
   const items = document.querySelectorAll('#exerciseList .exercise-item');
-  if (items.length === 0) { alert('请至少添加一个动作'); return null; }
+  if (items.length === 0) { alert(t('alert.needExercise')); return null; }
   const exercises = [];
   items.forEach(item => {
     const inputs = item.querySelectorAll('input');
     if (item.dataset.type === 'exercise') {
       exercises.push({
         type: 'exercise',
-        name: inputs[0].value.trim() || '未命名动作',
+        name: inputs[0].value.trim() || t('form.unnamed'),
         sets: parseInt(inputs[1].value) || 4,
         reps: parseInt(inputs[2].value) || 12,
         duration: parseInt(inputs[3].value) || 45,
@@ -1482,11 +1761,11 @@ function savePlan() {
 function importPlan() {
   const text = document.getElementById('importText').value.trim();
   const name = document.getElementById('importPlanName').value.trim();
-  if (!text) { alert('请粘贴健身计划'); return; }
-  if (!name) { alert('请输入计划名称'); return; }
+  if (!text) { alert(t('alert.needText')); return; }
+  if (!name) { alert(t('alert.needName')); return; }
 
   const exercises = parseWorkoutText(text);
-  if (exercises.length === 0) { alert('未识别到有效动作，请检查格式'); return; }
+  if (exercises.length === 0) { alert(t('import.noResult')); return; }
   plans.push({ name, exercises, createdAt: new Date().toISOString() });
   savePlans();
   document.getElementById('importText').value = '';
@@ -1721,8 +2000,8 @@ function generatePlan() {
   const equipment = document.getElementById('autoEquipment').value;
   const duration = parseInt(document.getElementById('autoDuration').value) || 45;
 
-  if (!age || !height || !weight) { alert('请填写完整体征信息'); return; }
-  if (!selectedGoal) { alert('请选择训练目标'); return; }
+  if (!age || !height || !weight) { alert(t('alert.needInfo')); return; }
+  if (!selectedGoal) { alert(t('alert.needGoal')); return; }
 
   const exerciseDB = {
     // No equipment
@@ -1784,9 +2063,9 @@ function generatePlan() {
     }
   });
 
-  const goalNames = { muscle: '增肌', 'fat-loss': '减脂', strength: '力量', endurance: '耐力', flexibility: '柔韧', overall: '综合' };
-  const levelNames = { beginner: '新手', intermediate: '中级', advanced: '高级' };
-  const planName = `${goalNames[selectedGoal]}训练 · ${levelNames[level]}`;
+  const goalKey = 'goal.' + selectedGoal;
+  const levelKey = 'auto.level.' + level;
+  const planName = t('auto.planName', {goal: t(goalKey), level: t(levelKey)});
 
   plans.push({ name: planName, exercises, createdAt: new Date().toISOString() });
   savePlans();
@@ -1847,7 +2126,7 @@ function buildWorkoutSteps(plan) {
 
   plan.exercises.forEach((ex, idx) => {
     if (ex.type === 'rest') {
-      steps.push({ type: 'rest', name: '休息', duration: ex.duration });
+      steps.push({ type: 'rest', name: 'rest', duration: ex.duration });
       return;
     }
 
@@ -1858,7 +2137,7 @@ function buildWorkoutSteps(plan) {
       if (!prev || (prev.type !== 'rest' && prev.type !== 'set-rest')) {
         steps.push({
           type: 'rest',
-          name: '换动作休息',
+          name: 'change-rest',
           duration: lastRestDuration,
           nextExercise: ex.name
         });
@@ -1877,7 +2156,7 @@ function buildWorkoutSteps(plan) {
         hint: ex.hint || ''
       });
       if (s < ex.sets && (ex.restBetweenSets || 0) > 0) {
-        steps.push({ type: 'set-rest', name: '组间休息', duration: ex.restBetweenSets || 30, nextExercise: ex.name, nextSet: s + 1 });
+        steps.push({ type: 'set-rest', name: 'set-rest', duration: ex.restBetweenSets || 30, nextExercise: ex.name, nextSet: s + 1 });
       }
     }
 
@@ -2073,13 +2352,13 @@ function loadStep(index) {
   const countBased = isCountBasedStep(step);
 
   if (step.type === 'exercise') {
-    phaseLabel.textContent = '🔥 运动中';
+    phaseLabel.textContent = t('workout.exercising');
     nameEl.textContent = step.name;
     if (step.totalSets > 1) {
-      detailEl.textContent = `${step.reps}次/组`;
-      setInfo.textContent = `第 ${step.set} 组 / 共 ${step.totalSets} 组`;
+      detailEl.textContent = t('workout.repsPerSet', {reps: step.reps});
+      setInfo.textContent = t('workout.setInfo', {current: step.set, total: step.totalSets});
     } else if (step.reps > 1) {
-      detailEl.textContent = `${step.reps} 次`;
+      detailEl.textContent = t('workout.reps', {reps: step.reps});
       setInfo.textContent = '';
     } else {
       detailEl.textContent = '';
@@ -2087,14 +2366,13 @@ function loadStep(index) {
     }
 
     if (countBased) {
-      // Count-based: show done button, hide timer
       timerEl.style.display = 'none';
       doneBtn.style.display = '';
     }
   } else {
-    phaseLabel.textContent = '😌 休息';
-    nameEl.textContent = step.name === '换动作休息' ? '换动作休息' : '休息一下';
-    detailEl.textContent = step.nextExercise ? `下一个：${step.nextExercise}` : '准备下一个动作';
+    phaseLabel.textContent = t('workout.rest');
+    nameEl.textContent = step.name === 'change-rest' ? t('workout.changeRest') : t('workout.restLabel');
+    detailEl.textContent = step.nextExercise ? t('workout.nextExercise', {name: step.nextExercise}) : t('workout.prepareNext');
     setInfo.textContent = '';
   }
 
@@ -2120,18 +2398,17 @@ function loadStep(index) {
   }
 
   if (nextDifferentEx) {
-    nextInfo.textContent = `下一个动作：${nextDifferentEx.name}`;
+    nextInfo.textContent = t('workout.nextDiff', {name: nextDifferentEx.name});
   } else if (index + 1 >= currentWorkout.steps.length) {
-    nextInfo.textContent = '最后一项了！加油！💪';
+    nextInfo.textContent = t('workout.lastItem');
   } else {
-    // Same exercise continues or only rest left
     const next = currentWorkout.steps[index + 1];
     if (next.type === 'exercise' && next.name === currentName) {
-      nextInfo.textContent = `下一组：第 ${next.set} 组`;
+      nextInfo.textContent = t('workout.nextSet', {set: next.set});
     } else if (next.type === 'set-rest' || next.type === 'rest') {
-      nextInfo.textContent = `休息 ${next.duration}秒后继续`;
+      nextInfo.textContent = t('workout.restThen', {duration: next.duration});
     } else {
-      nextInfo.textContent = '即将完成！💪';
+      nextInfo.textContent = t('workout.almostDone');
     }
   }
 
@@ -2175,9 +2452,8 @@ function triggerCompletion() {
   const hintEl = document.getElementById('workoutHint');
   const doneBtn = document.getElementById('workoutDoneBtn');
 
-  // Update content to show completion message
-  phaseLabel.textContent = '🎉 恭喜！';
-  nameEl.textContent = '全部完成！';
+  phaseLabel.textContent = t('workout.congrats');
+  nameEl.textContent = t('workout.allDone');
   detailEl.textContent = '';
   timerEl.style.display = 'none';
   setInfo.textContent = '';
@@ -2238,13 +2514,13 @@ function showCompletion() {
   // Exercise detail list
   const exColors = ['#FF6B35','#7C4DFF','#00D4AA','#FF4081','#00B0FF','#FFAB00','#E040FB','#00E676'];
   const exListEl = document.getElementById('completionExercises');
-  exListEl.innerHTML = '<h3 style="margin-bottom:10px;font-size:1em;color:var(--text-dim)">训练详情</h3>' +
+  exListEl.innerHTML = `<h3 style="margin-bottom:10px;font-size:1em;color:var(--text-dim)">${t('complete.detail')}</h3>` +
     exerciseList.map((ex, i) => `
       <div class="completion-ex-item">
         <div class="ex-icon" style="background:${exColors[i % exColors.length]}22;color:${exColors[i % exColors.length]}">💪</div>
         <div class="ex-info">
           <div class="ex-name">${escapeHtml(ex.name)}</div>
-          <div class="ex-detail">${ex.sets}组${ex.reps > 1 ? ' × ' + ex.reps + '次' : ''}</div>
+          <div class="ex-detail">${t('complete.exSummary', {sets: ex.sets, reps: ex.reps > 1 ? ' × ' + ex.reps : ''})}</div>
         </div>
         <div class="ex-check">✓</div>
       </div>
@@ -2436,15 +2712,17 @@ function renderHistory() {
   if (workoutHistory.length === 0) {
     container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-dim)">
       <p style="font-size:2em;margin-bottom:12px">📊</p>
-      <p>还没有训练记录</p>
-      <p style="font-size:0.85em;margin-top:8px">完成一次训练后记录会自动保存</p>
+      <p>${t('history.empty')}</p>
+      <p style="font-size:0.85em;margin-top:8px">${t('history.empty.desc')}</p>
     </div>`;
     return;
   }
 
   container.innerHTML = workoutHistory.map((record, i) => {
     const d = new Date(record.date);
-    const dateStr = `${d.getMonth()+1}月${d.getDate()}日 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    const dateStr = currentLang === 'zh'
+      ? `${d.getMonth()+1}月${d.getDate()}日 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
+      : `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
     const durMins = Math.floor(record.duration / 60);
     const durSecs = record.duration % 60;
     return `<div class="history-card">
@@ -2454,8 +2732,8 @@ function renderHistory() {
       </div>
       <div class="history-card-stats">
         <span>⏱ <strong>${durMins}:${String(durSecs).padStart(2,'0')}</strong></span>
-        <span>🏋️ <strong>${record.exerciseCount}</strong>个动作</span>
-        <span>🔄 <strong>${record.totalSets}</strong>组</span>
+        <span>🏋️ <strong>${record.exerciseCount}</strong>${t('history.exercises')}</span>
+        <span>🔄 <strong>${record.totalSets}</strong>${t('history.sets')}</span>
       </div>
       <div class="history-exercises-list">
         ${record.exercises.map(e => `<span class="history-ex-tag">${escapeHtml(e.name)}</span>`).join('')}
@@ -2465,7 +2743,7 @@ function renderHistory() {
 }
 
 function clearHistory() {
-  if (!confirm('确定要清空所有训练记录吗？')) return;
+  if (!confirm(t('history.clearConfirm'))) return;
   workoutHistory = [];
   localStorage.setItem('fitness-history', JSON.stringify(workoutHistory));
   renderHistory();
@@ -2508,10 +2786,10 @@ function showInstallBanner() {
   banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#FF6B35,#FF1744);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;z-index:200;gap:12px;';
   banner.innerHTML = `
     <div style="flex:1">
-      <div style="font-weight:700;font-size:1em">安装「天枢智元·智练」到主屏幕</div>
-      <div style="font-size:0.8em;opacity:0.85">离线可用，全屏体验，像原生 App 一样</div>
+      <div style="font-weight:700;font-size:1em">${t('install.title')}</div>
+      <div style="font-size:0.8em;opacity:0.85">${t('install.desc')}</div>
     </div>
-    <button onclick="installApp()" style="padding:8px 20px;border-radius:8px;border:2px solid white;background:rgba(255,255,255,0.2);color:white;font-weight:700;cursor:pointer;white-space:nowrap">安装</button>
+    <button onclick="installApp()" style="padding:8px 20px;border-radius:8px;border:2px solid white;background:rgba(255,255,255,0.2);color:white;font-weight:700;cursor:pointer;white-space:nowrap">${t('install.btn')}</button>
     <button onclick="this.parentElement.remove()" style="background:none;border:none;color:white;font-size:1.3em;cursor:pointer;padding:4px">✕</button>
   `;
   document.body.appendChild(banner);
@@ -2612,6 +2890,7 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
 }
 
 // Init
+applyLanguage();
 renderPlans();
 </script>
 </body>
