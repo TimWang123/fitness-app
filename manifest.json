@@ -13,5 +13,11 @@
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [
+    { "src": "screenshots/home.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "首页 - 天枢智元·智练" },
+    { "src": "screenshots/plans.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "我的训练计划" },
+    { "src": "screenshots/create.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "创建训练计划" },
+    { "src": "screenshots/history.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "训练记录" }
   ]
 }
