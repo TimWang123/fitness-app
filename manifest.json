@@ -1,4 +1,5 @@
 {
+  "id": "/fitness-app/",
   "name": "天枢智元·智练",
   "short_name": "智练",
   "description": "全屏跟练计时器，告别计时器和计划之间的切换",
@@ -8,6 +9,8 @@
   "background_color": "#ffffff",
   "theme_color": "#7C4DFF",
   "lang": "zh-CN",
+  "categories": ["fitness", "health", "lifestyle"],
+  "prefer_related_applications": false,
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
