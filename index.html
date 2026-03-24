@@ -825,6 +825,66 @@ body {
   border: 1px solid rgba(255,107,53,0.12);
 }
 
+/* ===== Training Calendar ===== */
+.calendar-container {
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255,255,255,0.6);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+}
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.calendar-month {
+  font-weight: 800;
+  font-size: 1.05em;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+.calendar-grid .cal-weekday {
+  font-size: 0.7em;
+  font-weight: 700;
+  color: var(--text-dim);
+  padding: 4px 0;
+}
+.calendar-grid .cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--text-dim);
+  position: relative;
+}
+.calendar-grid .cal-day.today {
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+.calendar-grid .cal-day.has-workout {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(255,107,53,0.3);
+}
+.calendar-grid .cal-day.has-workout.today {
+  border: 2px solid white;
+  box-shadow: 0 2px 12px rgba(255,107,53,0.5);
+}
+.calendar-grid .cal-day.empty { visibility: hidden; }
+
 /* ===== Tabs ===== */
 .tabs {
   display: flex;
@@ -1446,6 +1506,11 @@ body {
         <h3 data-i18n="home.auto">智能定制</h3>
         <p data-i18n="home.auto.desc">根据你的体征生成专属计划</p>
       </div>
+      <div class="action-card" onclick="showPage('history');setTimeout(showCalendar,100)">
+        <div class="icon">📅</div>
+        <h3 data-i18n="home.calendar">训练日历</h3>
+        <p data-i18n="home.calendar.desc">查看每日训练打卡记录</p>
+      </div>
     </div>
   </div>
 </div>
@@ -1555,6 +1620,16 @@ body {
     </div>
     <button class="btn btn-danger btn-sm" onclick="clearHistory()" data-i18n="history.clear">清空记录</button>
   </div>
+  <!-- Calendar View -->
+  <div class="calendar-container" id="calendarContainer">
+    <div class="calendar-header">
+      <button class="btn btn-ghost btn-sm" onclick="changeCalendarMonth(-1)">←</button>
+      <span class="calendar-month" id="calendarMonth"></span>
+      <button class="btn btn-ghost btn-sm" onclick="changeCalendarMonth(1)">→</button>
+    </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+  </div>
+
   <div id="historyList">
     <div style="text-align:center;padding:40px;color:var(--text-dim)">
       <p style="font-size:2em;margin-bottom:12px">📊</p>
@@ -1601,9 +1676,9 @@ body {
   <div class="workout-bottom-area">
     <div class="workout-next" id="workoutNext">下一个：休息 90秒</div>
     <div class="workout-controls" id="workoutControls">
-      <button class="workout-btn" id="prevBtn" onclick="prevStep()">⏮</button>
-      <button class="workout-btn main" id="playPauseBtn" onclick="togglePause()">⏸</button>
-      <button class="workout-btn" id="nextBtn" onclick="nextStep()">⏭</button>
+      <button class="workout-btn" id="prevBtn" onclick="prevStep()"><svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+      <button class="workout-btn main" id="playPauseBtn" onclick="togglePause()"><svg id="pauseIcon" width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M6 19h4V5H6zm8-14v14h4V5z"/></svg></button>
+      <button class="workout-btn" id="nextBtn" onclick="nextStep()"><svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M6 18l8.5-6L6 6v12zm10-12v12h2V6z"/></svg></button>
     </div>
     <!-- Celebration button (hidden, appears after last step) -->
     <button class="celebrate-btn" id="celebrateBtn" style="display:none" onclick="showCompletion()" data-i18n="workout.celebrate">🎉 训练完成！</button>
@@ -1663,6 +1738,7 @@ zh: {
   'home.manual': '手动创建', 'home.manual.desc': '自定义每个动作、组数和时间',
   'home.import': '导入计划', 'home.import.desc': '粘贴文本快速导入健身计划',
   'home.auto': '智能定制', 'home.auto.desc': '根据你的体征生成专属计划',
+  'home.calendar': '训练日历', 'home.calendar.desc': '查看每日训练打卡记录',
   'plans.title': '我的计划', 'plans.subtitle': '点击计划开始跟练', 'plans.new': '+ 新计划',
   'plans.empty': '还没有健身计划', 'plans.empty.desc': '创建或导入一个计划开始训练吧',
   'plans.stats': '{exercises}个动作 · {sets}组 · 约{mins}分钟',
@@ -1734,6 +1810,7 @@ en: {
   'home.manual': 'Manual', 'home.manual.desc': 'Customize exercises, sets, and timing',
   'home.import': 'Import', 'home.import.desc': 'Paste text to quickly import workout plans',
   'home.auto': 'AI Generate', 'home.auto.desc': 'Generate a plan based on your body profile',
+  'home.calendar': 'Calendar', 'home.calendar.desc': 'View your daily workout check-ins',
   'plans.title': 'My Plans', 'plans.subtitle': 'Tap a plan to start', 'plans.new': '+ New Plan',
   'plans.empty': 'No workout plans yet', 'plans.empty.desc': 'Create or import a plan to get started',
   'plans.stats': '{exercises} exercises · {sets} sets · ~{mins} min',
@@ -1805,6 +1882,7 @@ es: {
   'home.manual': 'Manual', 'home.manual.desc': 'Personaliza ejercicios, series y tiempos',
   'home.import': 'Importar', 'home.import.desc': 'Pega texto para importar tu plan',
   'home.auto': 'IA Generar', 'home.auto.desc': 'Genera un plan según tu perfil corporal',
+  'home.calendar': 'Calendario', 'home.calendar.desc': 'Mira tus registros diarios de entrenamiento',
   'plans.title': 'Mis Planes', 'plans.subtitle': 'Toca un plan para empezar', 'plans.new': '+ Nuevo Plan',
   'plans.empty': 'Aún no hay planes', 'plans.empty.desc': 'Crea o importa un plan para empezar',
   'plans.stats': '{exercises} ejercicios · {sets} series · ~{mins} min',
@@ -1959,6 +2037,32 @@ function beep(freq = 800, duration = 150, count = 1) {
       gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration / 1000);
       osc.stop(audioCtx.currentTime + duration / 1000);
     }, i * (duration + 80));
+  }
+}
+
+// Voice countdown using Web Speech API
+const countdownWords = {
+  zh: { 3: '三', 2: '二', 1: '一' },
+  en: { 3: 'three', 2: 'two', 1: 'one' },
+  es: { 3: 'tres', 2: 'dos', 1: 'uno' }
+};
+const countdownLangs = { zh: 'zh-CN', en: 'en-US', es: 'es-ES' };
+
+function speakCountdown(n) {
+  if (!soundEnabled) return;
+  if ('speechSynthesis' in window) {
+    const lang = currentLang || 'zh';
+    const word = (countdownWords[lang] || countdownWords.zh)[n];
+    const utter = new SpeechSynthesisUtterance(word);
+    utter.lang = countdownLangs[lang] || 'zh-CN';
+    utter.rate = 1.1;
+    utter.volume = 1;
+    utter.pitch = 1.1;
+    speechSynthesis.cancel(); // cancel any queued
+    speechSynthesis.speak(utter);
+  } else {
+    // Fallback to beep
+    beep(1000, 100, 1);
   }
 }
 
@@ -3081,7 +3185,7 @@ function loadStep(index) {
   if (!countBased) {
     timeRemaining = step.duration;
     isPaused = false;
-    document.getElementById('playPauseBtn').textContent = '⏸';
+    document.getElementById('playPauseBtn').innerHTML = '<svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M6 19h4V5H6zm8-14v14h4V5z"/></svg>';
     updateTimerDisplay();
     startTimer();
   } else {
@@ -3297,10 +3401,10 @@ function startTimer() {
     timeRemaining--;
     updateTimerDisplay();
 
-    // Warning beeps at 3, 2, 1
-    if (timeRemaining === 3) beep(1000, 100, 1);
-    if (timeRemaining === 2) beep(1000, 100, 1);
-    if (timeRemaining === 1) beep(1000, 100, 1);
+    // Voice countdown at 3, 2, 1
+    if (timeRemaining === 3) speakCountdown(3);
+    if (timeRemaining === 2) speakCountdown(2);
+    if (timeRemaining === 1) speakCountdown(1);
 
     if (timeRemaining <= 0) {
       clearInterval(timerInterval);
@@ -3330,7 +3434,9 @@ function updateTimerDisplay() {
 
 function togglePause() {
   isPaused = !isPaused;
-  document.getElementById('playPauseBtn').textContent = isPaused ? '▶' : '⏸';
+  document.getElementById('playPauseBtn').innerHTML = isPaused
+    ? '<svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>'
+    : '<svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M6 19h4V5H6zm8-14v14h4V5z"/></svg>';
 }
 
 function nextStep() {
@@ -3368,6 +3474,7 @@ function exitWorkout() {
 
 // ===== History =====
 function renderHistory() {
+  renderCalendar();
   const container = document.getElementById('historyList');
   if (workoutHistory.length === 0) {
     container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-dim)">
@@ -3407,6 +3514,69 @@ function clearHistory() {
   workoutHistory = [];
   localStorage.setItem('fitness-history', JSON.stringify(workoutHistory));
   renderHistory();
+  renderCalendar();
+}
+
+// ===== Training Calendar =====
+let calendarDate = new Date();
+
+function showCalendar() {
+  renderCalendar();
+}
+
+function changeCalendarMonth(delta) {
+  calendarDate.setMonth(calendarDate.getMonth() + delta);
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const year = calendarDate.getFullYear();
+  const month = calendarDate.getMonth();
+  const grid = document.getElementById('calendarGrid');
+  const monthLabel = document.getElementById('calendarMonth');
+  if (!grid || !monthLabel) return;
+
+  const monthNames = {
+    zh: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+    en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    es: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+  };
+  const weekdays = {
+    zh: ['一','二','三','四','五','六','日'],
+    en: ['Mo','Tu','We','Th','Fr','Sa','Su'],
+    es: ['Lu','Ma','Mi','Ju','Vi','Sa','Do']
+  };
+
+  const lang = currentLang || 'zh';
+  monthLabel.textContent = `${year} ${(monthNames[lang]||monthNames.zh)[month]}`;
+
+  // Workout dates this month
+  const workoutDays = new Set();
+  workoutHistory.forEach(r => {
+    const d = new Date(r.date);
+    if (d.getFullYear() === year && d.getMonth() === month) {
+      workoutDays.add(d.getDate());
+    }
+  });
+
+  const today = new Date();
+  const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+  const firstDay = new Date(year, month, 1).getDay(); // 0=Sun
+  const offset = firstDay === 0 ? 6 : firstDay - 1; // Monday-start
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  let html = (weekdays[lang]||weekdays.zh).map(d => `<div class="cal-weekday">${d}</div>`).join('');
+
+  for (let i = 0; i < offset; i++) html += '<div class="cal-day empty"></div>';
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const classes = ['cal-day'];
+    if (isCurrentMonth && d === today.getDate()) classes.push('today');
+    if (workoutDays.has(d)) classes.push('has-workout');
+    html += `<div class="${classes.join(' ')}">${d}</div>`;
+  }
+
+  grid.innerHTML = html;
 }
 
 // ===== Utility =====
