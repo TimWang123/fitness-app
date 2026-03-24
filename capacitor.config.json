@@ -1,0 +1,17 @@
+{
+  "appId": "com.tianshuzhiyuan.fitflow",
+  "appName": "天枢智元·智练",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#ffffff"
+  },
+  "plugins": {
+    "FirebaseAuthentication": {
+      "skipNativeAuth": false,
+      "providers": ["google.com", "phone"]
+    }
+  }
+}

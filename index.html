@@ -958,6 +958,142 @@ body {
 }
 .sound-toggle:active { transform: translateX(-50%) scale(0.95); }
 
+/* ===== AI Wizard ===== */
+.ai-wizard-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.ai-wizard-overlay.active { display: flex; }
+.ai-wizard {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border-radius: 24px;
+  padding: 0;
+  max-width: 440px;
+  width: 100%;
+  max-height: 85vh;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.7);
+  box-shadow: 0 20px 80px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+}
+.ai-wizard-progress {
+  height: 4px;
+  background: rgba(0,0,0,0.06);
+  border-radius: 2px;
+}
+.ai-wizard-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: 2px;
+  transition: width 0.4s ease;
+  width: 12.5%;
+}
+.ai-wizard-card {
+  flex: 1;
+  padding: 28px 24px;
+  overflow-y: auto;
+  min-height: 280px;
+}
+.ai-wizard-card h3 {
+  font-size: 1.3em;
+  margin-bottom: 6px;
+}
+.ai-wizard-card .wizard-subtitle {
+  color: var(--text-dim);
+  font-size: 0.85em;
+  margin-bottom: 20px;
+}
+.ai-wizard-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+.ai-wizard-step {
+  font-size: 0.8em;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+/* Wizard option chips */
+.wizard-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.wizard-chip {
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 2px solid rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.6);
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.wizard-chip:hover { border-color: var(--primary); }
+.wizard-chip.selected {
+  border-color: var(--primary);
+  background: rgba(255,107,53,0.1);
+  color: var(--primary);
+}
+.wizard-chip .chip-icon {
+  display: block;
+  font-size: 1.5em;
+  margin-bottom: 4px;
+  text-align: center;
+}
+.wizard-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid rgba(0,0,0,0.08);
+  border-radius: 12px;
+  font-size: 1em;
+  background: rgba(255,255,255,0.6);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.wizard-input:focus { border-color: var(--primary); }
+.wizard-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.wizard-field label {
+  display: block;
+  font-size: 0.8em;
+  font-weight: 700;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+/* AI generating animation */
+.ai-generating {
+  text-align: center;
+  padding: 40px 20px;
+}
+.ai-generating .spinner {
+  width: 48px; height: 48px;
+  border: 4px solid rgba(0,0,0,0.08);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.ai-generating p { color: var(--text-dim); font-size: 0.9em; }
+.ai-error { color: var(--danger); font-size: 0.85em; margin-top: 12px; text-align: center; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+
 /* ===== Modal ===== */
 .modal-overlay {
   display: none;
@@ -1302,82 +1438,29 @@ body {
 
   <!-- Auto Generate -->
   <div class="tab-content" id="tab-auto">
-    <div class="body-form">
-      <h3 style="margin-bottom:16px" data-i18n="auto.title">填写你的体征信息</h3>
-      <div class="form-row">
-        <div class="form-group">
-          <label data-i18n="auto.gender">性别</label>
-          <select id="autoGender">
-            <option value="male">男</option>
-            <option value="female">女</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label data-i18n="auto.age">年龄</label>
-          <input type="number" id="autoAge" placeholder="25" min="10" max="80">
-        </div>
+    <div style="text-align:center;padding:30px 10px">
+      <div style="font-size:3em;margin-bottom:12px">🤖</div>
+      <h3 style="margin-bottom:8px">AI 智能定制</h3>
+      <p style="color:var(--text-dim);margin-bottom:24px;font-size:0.9em">回答几个问题，AI 将为你生成专属训练计划</p>
+      <button class="btn btn-accent btn-lg" style="width:100%;max-width:320px" onclick="startAIWizard()">开始定制 →</button>
+    </div>
+  </div>
+
+  <!-- AI Wizard Modal -->
+  <div class="ai-wizard-overlay" id="aiWizardOverlay">
+    <div class="ai-wizard">
+      <div class="ai-wizard-progress">
+        <div class="ai-wizard-progress-fill" id="wizardProgressFill"></div>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label data-i18n="auto.height">身高 (cm)</label>
-          <input type="number" id="autoHeight" placeholder="175" min="100" max="250">
-        </div>
-        <div class="form-group">
-          <label data-i18n="auto.weight">体重 (kg)</label>
-          <input type="number" id="autoWeight" placeholder="70" min="30" max="200">
-        </div>
+      <div class="ai-wizard-card" id="wizardCard">
+        <!-- Cards inserted dynamically -->
       </div>
-      <div class="form-group">
-        <label data-i18n="auto.level">健身经验</label>
-        <select id="autoLevel">
-          <option value="beginner">新手（0-6个月）</option>
-          <option value="intermediate">中级（6个月-2年）</option>
-          <option value="advanced">高级（2年以上）</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label data-i18n="auto.goal">训练目标</label>
-        <div class="goal-options" id="goalOptions">
-          <div class="goal-option" onclick="selectGoal(this, 'muscle')" data-goal="muscle">
-            <div class="goal-icon">💪</div>
-            <div class="goal-name" data-i18n="goal.muscle">增肌</div>
-          </div>
-          <div class="goal-option" onclick="selectGoal(this, 'fat-loss')" data-goal="fat-loss">
-            <div class="goal-icon">🔥</div>
-            <div class="goal-name" data-i18n="goal.fat-loss">减脂</div>
-          </div>
-          <div class="goal-option" onclick="selectGoal(this, 'strength')" data-goal="strength">
-            <div class="goal-icon">🏋️</div>
-            <div class="goal-name" data-i18n="goal.strength">力量</div>
-          </div>
-          <div class="goal-option" onclick="selectGoal(this, 'endurance')" data-goal="endurance">
-            <div class="goal-icon">🏃</div>
-            <div class="goal-name" data-i18n="goal.endurance">耐力</div>
-          </div>
-          <div class="goal-option" onclick="selectGoal(this, 'flexibility')" data-goal="flexibility">
-            <div class="goal-icon">🧘</div>
-            <div class="goal-name" data-i18n="goal.flexibility">柔韧</div>
-          </div>
-          <div class="goal-option" onclick="selectGoal(this, 'overall')" data-goal="overall">
-            <div class="goal-icon">⚡</div>
-            <div class="goal-name" data-i18n="goal.overall">综合</div>
-          </div>
-        </div>
-      </div>
-      <div class="form-group">
-        <label data-i18n="auto.equipment">可用器材</label>
-        <select id="autoEquipment">
-          <option value="none">无器材（徒手）</option>
-          <option value="basic">基础器材（哑铃+弹力带）</option>
-          <option value="gym">健身房（全器材）</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label data-i18n="auto.duration">训练时长（分钟）</label>
-        <input type="number" id="autoDuration" placeholder="45" min="15" max="120" value="45">
+      <div class="ai-wizard-nav">
+        <button class="btn btn-ghost" id="wizardPrevBtn" onclick="wizardPrev()">← 上一步</button>
+        <span class="ai-wizard-step" id="wizardStepLabel">1 / 8</span>
+        <button class="btn btn-primary" id="wizardNextBtn" onclick="wizardNext()">下一步 →</button>
       </div>
     </div>
-    <button class="btn btn-accent btn-lg" style="width:100%;margin-top:16px" onclick="generatePlan()" data-i18n="auto.generate">🤖 生成专属计划</button>
   </div>
 </div>
 
@@ -2231,85 +2314,308 @@ function selectGoal(el, goal) {
   selectedGoal = goal;
 }
 
-function generatePlan() {
-  const gender = document.getElementById('autoGender').value;
-  const age = parseInt(document.getElementById('autoAge').value);
-  const height = parseInt(document.getElementById('autoHeight').value);
-  const weight = parseInt(document.getElementById('autoWeight').value);
-  const level = document.getElementById('autoLevel').value;
-  const equipment = document.getElementById('autoEquipment').value;
-  const duration = parseInt(document.getElementById('autoDuration').value) || 45;
+// ===== AI Wizard =====
+const MINIMAX_API_KEY = 'sk-cp-zUeYvNMVtorV5qeB0tSyZ1y067l8ecvJC5KZiLkVL4nKYh0DSDH0EvM6iEAu5ew_FQcjDxyMGrONHP6R_2QDdNh6R855_CWk_dQhEksBRWLc-vBAYJ8fLNA';
+let wizardStep = 0;
+let wizardData = {};
 
-  if (!age || !height || !weight) { alert(t('alert.needInfo')); return; }
-  if (!selectedGoal) { alert(t('alert.needGoal')); return; }
-
-  const exerciseDB = {
-    // No equipment
-    none: {
-      muscle: ['俯卧撑', '深蹲', '弓步蹲', '臀桥', '平板支撑', '仰卧起坐', '钻石俯卧撑', '保加利亚蹲', '超人式', '登山者'],
-      'fat-loss': ['波比跳', '高抬腿', '开合跳', '深蹲跳', '登山者', '快速出拳', '侧向滑步', '仰卧蹬车', '弓步跳', '平板支撑'],
-      strength: ['俯卧撑', '引体向上（门框）', '手枪深蹲', '倒立撑', '单腿硬拉', '弓步蹲', '三头撑体', '超人式', '深蹲保持', '平板支撑'],
-      endurance: ['波比跳', '高抬腿', '开合跳', '深蹲', '登山者', '俯卧撑', '仰卧蹬车', '弓步蹲', '快速脚步', '侧向跑'],
-      flexibility: ['猫牛式', '下犬式', '鸽子式', '蝴蝶式', '前屈伸展', '脊柱扭转', '肩部拉伸', '髋屈肌拉伸', '小腿拉伸', '股四头肌拉伸'],
-      overall: ['俯卧撑', '深蹲', '波比跳', '平板支撑', '弓步蹲', '登山者', '仰卧起坐', '开合跳', '臀桥', '超人式']
-    },
-    basic: {
-      muscle: ['哑铃卧推', '哑铃划船', '哑铃肩推', '哑铃弯举', '哑铃深蹲', '哑铃硬拉', '哑铃飞鸟', '弹力带面拉', '锤式弯举', '哑铃三头臂屈伸'],
-      'fat-loss': ['哑铃摆荡', '哑铃抓举', '弹力带深蹲', '哑铃挺举', '弹力带高抬腿', '哑铃弓步走', '哑铃波比', '弹力带开合跳', '哑铃推举', '弹力带山羊挺身'],
-      strength: ['哑铃深蹲', '哑铃卧推', '哑铃硬拉', '哑铃肩推', '哑铃划船', '哑铃弓步蹲', '弹力带拉力', '哑铃耸肩', '哑铃臀推', '弹力带拉伸'],
-      endurance: ['哑铃摆荡', '弹力带深蹲', '哑铃弓步走', '弹力带划船', '哑铃推举组合', '弹力带高抬腿', '哑铃侧举', '弹力带臂弯举', '哑铃前平举', '弹力带面拉'],
-      flexibility: ['哑铃过顶深蹲', '弹力带肩部环绕', '哑铃土耳其起立', '弹力带髋外展', '弹力带拉伸', '哑铃风车', '弹力带胸部拉伸', '弹力带腿部拉伸', '哑铃侧弯', '弹力带脊柱旋转'],
-      overall: ['哑铃深蹲', '哑铃卧推', '哑铃划船', '弹力带面拉', '哑铃弓步蹲', '哑铃肩推', '哑铃弯举', '弹力带下拉', '哑铃硬拉', '弹力带核心旋转']
-    },
-    gym: {
-      muscle: ['杠铃卧推', '杠铃深蹲', '高位下拉', '坐姿划船', '哑铃肩推', '杠铃弯举', '腿举', '绳索飞鸟', '龙门架夹胸', '三头绳索下压'],
-      'fat-loss': ['杠铃硬拉', '战绳', '划船机', '壶铃摆荡', '药球砸', '跳箱', '杠铃推举', '绳索面拉', '有氧单车冲刺', '椭圆机间歇'],
-      strength: ['杠铃深蹲', '杠铃硬拉', '杠铃卧推', '杠铃肩推', '引体向上', '杠铃划船', '腿举', '罗马尼亚硬拉', '杠铃耸肩', '加重臂屈伸'],
-      endurance: ['划船机', '有氧单车', '跑步机间歇', '壶铃摆荡', '战绳', '杠铃循环训练', '药球旋转', '跳绳', '椭圆机', '拳击沙袋'],
-      flexibility: ['悬垂拉伸', '坐姿腿弯举拉伸', '泡沫轴背部', '泡沫轴腿部', '杠铃过顶蹲', '壶铃风车', '悬挂腿举', '瑜伽球拉伸', '泡沫轴髋部', '弹力带全身拉伸'],
-      overall: ['杠铃深蹲', '杠铃卧推', '杠铃硬拉', '高位下拉', '哑铃肩推', '绳索面拉', '腿举', '杠铃弯举', '绳索三头下压', '平板支撑']
+const wizardSteps = [
+  {
+    title: '👤 基本信息',
+    subtitle: '让我们先了解你',
+    render: () => `
+      <div class="wizard-row">
+        <div class="wizard-field"><label>性别</label>
+          <select class="wizard-input" id="wGender"><option value="男">男</option><option value="女">女</option></select></div>
+        <div class="wizard-field"><label>年龄</label>
+          <input class="wizard-input" type="number" id="wAge" placeholder="25" min="10" max="80" value="${wizardData.age||''}"></div>
+      </div>
+      <div class="wizard-row">
+        <div class="wizard-field"><label>身高 (cm)</label>
+          <input class="wizard-input" type="number" id="wHeight" placeholder="175" value="${wizardData.height||''}"></div>
+        <div class="wizard-field"><label>体重 (kg)</label>
+          <input class="wizard-input" type="number" id="wWeight" placeholder="70" value="${wizardData.weight||''}"></div>
+      </div>`,
+    save: () => {
+      wizardData.gender = document.getElementById('wGender').value;
+      wizardData.age = document.getElementById('wAge').value;
+      wizardData.height = document.getElementById('wHeight').value;
+      wizardData.weight = document.getElementById('wWeight').value;
+      return wizardData.age && wizardData.height && wizardData.weight;
     }
-  };
+  },
+  {
+    title: '🏋️ 健身经验',
+    subtitle: '你目前的训练水平',
+    render: () => `<div class="wizard-chips">
+      ${[['🌱','新手','0-6个月','beginner'],['💫','中级','6个月-2年','intermediate'],['🔥','高级','2年以上','advanced']].map(([icon,name,desc,val]) =>
+        `<div class="wizard-chip${wizardData.level===val?' selected':''}" onclick="wizardSelect(this,'level','${val}')" style="flex:1;text-align:center">
+          <span class="chip-icon">${icon}</span>${name}<br><small style="color:var(--text-dim)">${desc}</small></div>`).join('')}
+    </div>`,
+    save: () => !!wizardData.level
+  },
+  {
+    title: '🎯 训练目标',
+    subtitle: '你最想达到什么效果',
+    render: () => `<div class="wizard-chips">
+      ${[['💪','增肌','muscle'],['🔥','减脂','fat-loss'],['🏋️','力量','strength'],['🏃','耐力','endurance'],['🧘','柔韧','flexibility'],['⚡','综合','overall']].map(([icon,name,val]) =>
+        `<div class="wizard-chip${wizardData.goal===val?' selected':''}" onclick="wizardSelect(this,'goal','${val}')" style="min-width:80px;text-align:center">
+          <span class="chip-icon">${icon}</span>${name}</div>`).join('')}
+    </div>`,
+    save: () => !!wizardData.goal
+  },
+  {
+    title: '🏠 可用器材',
+    subtitle: '你在哪里训练',
+    render: () => `<div class="wizard-chips" style="flex-direction:column">
+      ${[['🙌','无器材（徒手）','适合家中或户外','none'],['🏠','基础器材','哑铃、弹力带等','basic'],['🏢','健身房','全套器械','gym']].map(([icon,name,desc,val]) =>
+        `<div class="wizard-chip${wizardData.equipment===val?' selected':''}" onclick="wizardSelect(this,'equipment','${val}')" style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:1.5em">${icon}</span><div><div style="font-weight:700">${name}</div><small style="color:var(--text-dim)">${desc}</small></div></div>`).join('')}
+    </div>`,
+    save: () => !!wizardData.equipment
+  },
+  {
+    title: '🎯 今天练哪里',
+    subtitle: '选择重点训练部位（可多选）',
+    render: () => {
+      const parts = [['胸部','🫁'],['背部','🔙'],['肩膀','🤷'],['手臂','💪'],['腿部','🦵'],['核心','🧘'],['臀部','🍑'],['全身','🏃']];
+      return `<div class="wizard-chips">${parts.map(([name,icon]) =>
+        `<div class="wizard-chip${(wizardData.bodyParts||[]).includes(name)?' selected':''}" onclick="wizardToggle(this,'bodyParts','${name}')" style="text-align:center">
+          <span class="chip-icon">${icon}</span>${name}</div>`).join('')}</div>`;
+    },
+    save: () => (wizardData.bodyParts||[]).length > 0
+  },
+  {
+    title: '⚠️ 身体状况',
+    subtitle: '有没有受伤或不适的部位？',
+    render: () => `
+      <div class="wizard-chips" style="margin-bottom:12px">
+        ${[['无伤病','healthy'],['膝盖不适','knee'],['腰部不适','back'],['肩部不适','shoulder'],['手腕不适','wrist'],['脚踝不适','ankle']].map(([name,val]) =>
+          `<div class="wizard-chip${(wizardData.injuries||[]).includes(val)?' selected':''}" onclick="wizardToggle(this,'injuries','${val}')">${name}</div>`).join('')}
+      </div>
+      <div class="wizard-field"><label>其他备注（可选）</label>
+        <input class="wizard-input" id="wNotes" placeholder="例如：左肩有旧伤" value="${wizardData.notes||''}"></div>`,
+    save: () => { wizardData.notes = (document.getElementById('wNotes')||{}).value || ''; return true; }
+  },
+  {
+    title: '⏱ 训练偏好',
+    subtitle: '最后几个设置',
+    render: () => `
+      <div class="wizard-field" style="margin-bottom:14px"><label>训练时长（分钟）</label>
+        <input class="wizard-input" type="number" id="wDuration" placeholder="45" min="15" max="120" value="${wizardData.duration||45}"></div>
+      <div class="wizard-field" style="margin-bottom:14px"><label>训练强度</label>
+        <div class="wizard-chips">
+          ${[['🟢','轻松','light'],['🟡','适中','moderate'],['🔴','高强度','intense']].map(([icon,name,val]) =>
+            `<div class="wizard-chip${wizardData.intensity===val?' selected':''}" onclick="wizardSelect(this,'intensity','${val}')" style="flex:1;text-align:center">${icon} ${name}</div>`).join('')}
+        </div></div>
+      <div class="wizard-field"><label>是否需要热身和拉伸</label>
+        <div class="wizard-chips">
+          <div class="wizard-chip${wizardData.warmup!==false?' selected':''}" onclick="wizardSelect(this,'warmup',true)" style="flex:1;text-align:center">✅ 需要</div>
+          <div class="wizard-chip${wizardData.warmup===false?' selected':''}" onclick="wizardSelect(this,'warmup',false)" style="flex:1;text-align:center">⏭ 跳过</div>
+        </div></div>`,
+    save: () => { wizardData.duration = parseInt((document.getElementById('wDuration')||{}).value) || 45; return !!wizardData.intensity; }
+  },
+  {
+    title: '🤖 AI 正在生成',
+    subtitle: '',
+    render: () => `<div class="ai-generating">
+      <div class="spinner"></div>
+      <p>AI 正在根据你的信息定制训练计划...</p>
+      <p style="font-size:0.8em;margin-top:8px;color:var(--text-dim)">这可能需要几秒钟</p>
+      <div class="ai-error" id="aiError"></div>
+    </div>`,
+    save: () => true,
+    auto: true
+  }
+];
 
-  // Determine parameters based on goal & level
-  const config = {
-    beginner: { sets: 3, reps: { muscle: 12, 'fat-loss': 15, strength: 8, endurance: 20, flexibility: 1, overall: 12 }, exDuration: { muscle: 45, 'fat-loss': 30, strength: 50, endurance: 30, flexibility: 30, overall: 40 }, restBetween: 45, restAfter: 60 },
-    intermediate: { sets: 4, reps: { muscle: 10, 'fat-loss': 15, strength: 6, endurance: 18, flexibility: 1, overall: 10 }, exDuration: { muscle: 50, 'fat-loss': 35, strength: 60, endurance: 35, flexibility: 35, overall: 45 }, restBetween: 40, restAfter: 75 },
-    advanced: { sets: 5, reps: { muscle: 8, 'fat-loss': 12, strength: 5, endurance: 15, flexibility: 1, overall: 8 }, exDuration: { muscle: 55, 'fat-loss': 30, strength: 70, endurance: 30, flexibility: 40, overall: 50 }, restBetween: 35, restAfter: 90 }
-  };
+function startAIWizard() {
+  wizardStep = 0;
+  wizardData = { warmup: true, intensity: 'moderate', bodyParts: [], injuries: [] };
+  document.getElementById('aiWizardOverlay').classList.add('active');
+  renderWizardStep();
+}
 
-  const cfg = config[level];
-  const pool = exerciseDB[equipment][selectedGoal];
+function closeAIWizard() {
+  document.getElementById('aiWizardOverlay').classList.remove('active');
+}
 
-  // Calculate how many exercises fit in the duration
-  const timePerExercise = cfg.sets * cfg.exDuration[selectedGoal] + (cfg.sets - 1) * cfg.restBetween + cfg.restAfter;
-  let numExercises = Math.max(3, Math.min(pool.length, Math.floor((duration * 60) / timePerExercise)));
+function renderWizardStep() {
+  const step = wizardSteps[wizardStep];
+  const card = document.getElementById('wizardCard');
+  card.innerHTML = `<h3>${step.title}</h3><p class="wizard-subtitle">${step.subtitle}</p>${step.render()}`;
+  document.getElementById('wizardProgressFill').style.width = ((wizardStep + 1) / wizardSteps.length * 100) + '%';
+  document.getElementById('wizardStepLabel').textContent = `${wizardStep + 1} / ${wizardSteps.length}`;
+  document.getElementById('wizardPrevBtn').style.visibility = wizardStep === 0 ? 'hidden' : 'visible';
+  const nextBtn = document.getElementById('wizardNextBtn');
+  if (wizardStep === wizardSteps.length - 1) {
+    nextBtn.style.display = 'none';
+  } else if (wizardStep === wizardSteps.length - 2) {
+    nextBtn.textContent = '🤖 生成计划';
+    nextBtn.style.display = '';
+  } else {
+    nextBtn.textContent = '下一步 →';
+    nextBtn.style.display = '';
+  }
+  // Auto-trigger for the generating step
+  if (step.auto) {
+    document.getElementById('wizardPrevBtn').style.visibility = 'hidden';
+    callMiniMaxAPI();
+  }
+}
 
-  // Shuffle and pick
-  const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, numExercises);
-
-  const exercises = [];
-  shuffled.forEach((name, i) => {
-    exercises.push({
-      type: 'exercise',
-      name,
-      sets: cfg.sets,
-      reps: cfg.reps[selectedGoal],
-      duration: cfg.exDuration[selectedGoal],
-      restBetweenSets: cfg.restBetween
+function wizardNext() {
+  const step = wizardSteps[wizardStep];
+  if (!step.save()) {
+    // Shake effect
+    document.getElementById('wizardCard').style.animation = 'none';
+    requestAnimationFrame(() => {
+      document.getElementById('wizardCard').style.animation = 'shake 0.3s ease';
     });
-    if (i < shuffled.length - 1) {
-      exercises.push({ type: 'rest', duration: cfg.restAfter });
+    return;
+  }
+  if (wizardStep < wizardSteps.length - 1) {
+    wizardStep++;
+    renderWizardStep();
+  }
+}
+
+function wizardPrev() {
+  if (wizardStep > 0) {
+    wizardStep--;
+    renderWizardStep();
+  }
+}
+
+function wizardSelect(el, key, value) {
+  wizardData[key] = value;
+  el.parentElement.querySelectorAll('.wizard-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function wizardToggle(el, key, value) {
+  if (!wizardData[key]) wizardData[key] = [];
+  const idx = wizardData[key].indexOf(value);
+  if (idx >= 0) { wizardData[key].splice(idx, 1); el.classList.remove('selected'); }
+  else { wizardData[key].push(value); el.classList.add('selected'); }
+  // If "healthy" is selected, deselect others
+  if (key === 'injuries' && value === 'healthy') {
+    wizardData.injuries = ['healthy'];
+    el.parentElement.querySelectorAll('.wizard-chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+  } else if (key === 'injuries' && value !== 'healthy') {
+    wizardData.injuries = wizardData.injuries.filter(v => v !== 'healthy');
+    el.parentElement.querySelector('.wizard-chip')?.classList.remove('selected');
+  }
+}
+
+async function callMiniMaxAPI() {
+  const injuryMap = { knee:'膝盖', back:'腰部', shoulder:'肩部', wrist:'手腕', ankle:'脚踝', healthy:'无' };
+  const goalMap = { muscle:'增肌', 'fat-loss':'减脂', strength:'力量提升', endurance:'耐力提升', flexibility:'柔韧性', overall:'综合体能' };
+  const equipMap = { none:'无器材（徒手）', basic:'哑铃+弹力带', gym:'健身房全套器械' };
+  const intensityMap = { light:'轻松', moderate:'适中', intense:'高强度' };
+
+  const prompt = `你是一位专业的健身教练。请根据以下用户信息生成一份详细的训练计划。
+
+用户信息：
+- 性别：${wizardData.gender}，年龄：${wizardData.age}岁，身高：${wizardData.height}cm，体重：${wizardData.weight}kg
+- 健身经验：${wizardData.level === 'beginner' ? '新手' : wizardData.level === 'intermediate' ? '中级' : '高级'}
+- 训练目标：${goalMap[wizardData.goal]}
+- 可用器材：${equipMap[wizardData.equipment]}
+- 重点部位：${wizardData.bodyParts.join('、')}
+- 伤病情况：${wizardData.injuries.map(i => injuryMap[i]||i).join('、')}${wizardData.notes ? '，备注：'+wizardData.notes : ''}
+- 训练时长：${wizardData.duration}分钟
+- 训练强度：${intensityMap[wizardData.intensity]}
+- ${wizardData.warmup ? '需要热身和拉伸' : '不需要热身拉伸'}
+
+请严格按照以下JSON格式返回，不要添加任何其他文字和markdown标记：
+{
+  "name": "计划名称",
+  "exercises": [
+    {
+      "type": "exercise",
+      "name": "动作名称",
+      "sets": 组数,
+      "reps": 每组次数,
+      "duration": 每组用时秒数,
+      "restBetweenSets": 组间休息秒数,
+      "hint": "动作要领提示"
     }
-  });
+  ]
+}
 
-  const goalKey = 'goal.' + selectedGoal;
-  const levelKey = 'auto.level.' + level;
-  const planName = t('auto.planName', {goal: t(goalKey), level: t(levelKey)});
+要求：
+1. 动作数量要匹配${wizardData.duration}分钟的训练时长
+2. ${wizardData.warmup ? '第一个动作为热身，最后一个为拉伸' : '不需要热身拉伸'}
+3. ${wizardData.injuries.includes('healthy') ? '' : '避免涉及'+wizardData.injuries.map(i=>injuryMap[i]).join('、')+'的动作'}
+4. 每个动作都要有hint（动作要领）
+5. duration是每组持续秒数（一般30-60秒），reps是每组重复次数
+6. 只返回JSON，不要有其他任何内容`;
 
-  plans.push({ name: planName, exercises, createdAt: new Date().toISOString() });
-  savePlans();
-  showPage('plans');
+  try {
+    const response = await fetch('https://api.minimax.chat/v1/text/chatcompletion_v2', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + MINIMAX_API_KEY
+      },
+      body: JSON.stringify({
+        model: 'MiniMax-M2-7',
+        messages: [
+          { role: 'system', content: '你是一位专业健身教练，只输出JSON格式的训练计划，不输出任何其他内容。' },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 4000
+      })
+    });
+
+    if (!response.ok) throw new Error('API请求失败: ' + response.status);
+
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content || '';
+
+    // Extract JSON from response (handle possible markdown code blocks)
+    let jsonStr = content.trim();
+    if (jsonStr.startsWith('```')) {
+      jsonStr = jsonStr.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+    }
+
+    const plan = JSON.parse(jsonStr);
+
+    // Validate and save
+    if (!plan.name || !plan.exercises || !plan.exercises.length) {
+      throw new Error('生成的计划格式不正确');
+    }
+
+    // Ensure all exercises have required fields
+    plan.exercises = plan.exercises.map(ex => ({
+      type: ex.type || 'exercise',
+      name: ex.name,
+      sets: ex.sets || 3,
+      reps: ex.reps || 12,
+      duration: ex.duration || 45,
+      restBetweenSets: ex.restBetweenSets || 45,
+      hint: ex.hint || ''
+    }));
+
+    plan.createdAt = new Date().toISOString();
+    plans.push(plan);
+    savePlans();
+
+    closeAIWizard();
+    showPage('plans');
+
+  } catch (e) {
+    console.error('AI generation error:', e);
+    const errEl = document.getElementById('aiError');
+    if (errEl) {
+      errEl.textContent = '生成失败：' + e.message + '。请返回重试。';
+    }
+    // Show prev button so user can go back
+    document.getElementById('wizardPrevBtn').style.visibility = 'visible';
+    document.getElementById('wizardPrevBtn').textContent = '← 返回修改';
+  }
 }
 
 // ===== Exercise Hint Database =====
@@ -3079,8 +3385,22 @@ async function signInWithGoogle() {
   }
   showAuthLoading(true);
   try {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    await firebaseAuth.signInWithPopup(provider);
+    // Check if running in Capacitor native app
+    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+      const CapFirebaseAuth = window.Capacitor.Plugins.FirebaseAuthentication;
+      if (CapFirebaseAuth) {
+        const result = await CapFirebaseAuth.signInWithGoogle();
+        // Use the credential to sign into Firebase web SDK
+        const credential = firebase.auth.GoogleAuthProvider.credential(result.credential.idToken);
+        await firebaseAuth.signInWithCredential(credential);
+      } else {
+        showAuthError('Native Google login plugin not available');
+      }
+    } else {
+      // Web browser: use popup
+      const provider = new firebase.auth.GoogleAuthProvider();
+      await firebaseAuth.signInWithPopup(provider);
+    }
     // onAuthStateChanged will handle the rest
   } catch (e) {
     console.error('Google sign-in error:', e);
