@@ -7,9 +7,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="天枢智元·智练">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#FF6B35" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0f1118" media="(prefers-color-scheme: dark)">
-<meta name="msapplication-navbutton-color" content="#FF6B35">
+<meta name="msapplication-navbutton-color" content="#ffffff">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.svg">
 <link rel="icon" type="image/svg+xml" href="icons/icon-192.svg">
@@ -33,7 +33,7 @@
   --border-light: rgba(0,0,0,0.06);
   --border-card: rgba(255,255,255,0.6);
   --shadow-card: 0 2px 16px rgba(0,0,0,0.05);
-  --nav-bg: rgba(255,255,255,0.6);
+  --nav-bg: rgba(255,255,255,0.95);
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -46,7 +46,7 @@
     --border-light: rgba(255,255,255,0.06);
     --border-card: rgba(255,255,255,0.08);
     --shadow-card: 0 2px 16px rgba(0,0,0,0.3);
-    --nav-bg: rgba(18,20,30,0.8);
+    --nav-bg: rgba(15,17,24,0.95);
   }
 }
 body {
@@ -55,7 +55,6 @@ body {
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
-  padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
   -webkit-user-select: none;
   user-select: none;
@@ -94,6 +93,7 @@ body {
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   padding: 10px 20px;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 10px);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -436,6 +436,7 @@ body {
   justify-content: center;
   text-align: center;
   padding: 20px;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 20px);
   background: linear-gradient(135deg, #1a1a2e, #16213e);
   overflow: hidden;
 }
@@ -1254,6 +1255,27 @@ body {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 .ai-generating p { color: var(--text-dim); font-size: 0.9em; }
+.ai-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--border-light);
+  border-radius: 3px;
+  margin: 20px 0 12px;
+  overflow: hidden;
+}
+.ai-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+.ai-progress-status {
+  font-size: 0.8em;
+  color: var(--text-dim);
+  min-height: 1.2em;
+  transition: opacity 0.3s;
+}
 .ai-error { color: var(--danger); font-size: 0.85em; margin-top: 12px; text-align: center; }
 @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
 
@@ -2118,6 +2140,10 @@ function switchTab(name) {
 // ===== Plan Management =====
 function savePlans() {
   localStorage.setItem('fitness-plans', JSON.stringify(plans));
+  // Auto-sync to cloud when logged in
+  if (currentUser && firebaseDb) {
+    syncToCloud().catch(() => {});
+  }
 }
 
 function renderPlans() {
@@ -2630,7 +2656,8 @@ const wizardSteps = [
     render: () => `<div class="ai-generating">
       <div class="spinner"></div>
       <p>AI 正在根据你的信息定制训练计划...</p>
-      <p style="font-size:0.8em;margin-top:8px;color:var(--text-dim)">这可能需要几秒钟</p>
+      <div class="ai-progress-bar"><div class="ai-progress-fill" id="aiProgressFill"></div></div>
+      <div class="ai-progress-status" id="aiProgressStatus">准备中...</div>
       <div class="ai-error" id="aiError"></div>
     </div>`,
     save: () => true,
@@ -2745,7 +2772,39 @@ function wizardToggle(el, key, value) {
   }
 }
 
+let aiProgressTimer = null;
+function startAIProgress() {
+  const stages = [
+    { pct: 15, text: '分析身体数据...' },
+    { pct: 30, text: '匹配训练模板...' },
+    { pct: 50, text: '规划动作编排...' },
+    { pct: 65, text: '计算组数与时间...' },
+    { pct: 80, text: '优化训练节奏...' },
+    { pct: 90, text: '即将完成...' }
+  ];
+  let i = 0;
+  const fill = document.getElementById('aiProgressFill');
+  const status = document.getElementById('aiProgressStatus');
+  if (!fill) return;
+  fill.style.width = '5%';
+  aiProgressTimer = setInterval(() => {
+    if (i < stages.length) {
+      fill.style.width = stages[i].pct + '%';
+      if (status) status.textContent = stages[i].text;
+      i++;
+    }
+  }, 2000);
+}
+function stopAIProgress(success) {
+  clearInterval(aiProgressTimer);
+  const fill = document.getElementById('aiProgressFill');
+  const status = document.getElementById('aiProgressStatus');
+  if (fill) fill.style.width = success ? '100%' : fill.style.width;
+  if (status) status.textContent = success ? '生成完成！' : '';
+}
+
 async function callMiniMaxAPI() {
+  startAIProgress();
   const injuryMap = { knee:'膝盖', back:'腰部', shoulder:'肩部', wrist:'手腕', ankle:'脚踝', healthy:'无' };
   const goalMap = { muscle:'增肌', 'fat-loss':'减脂', strength:'力量提升', endurance:'耐力提升', flexibility:'柔韧性', overall:'综合体能' };
   const equipMap = { none:'无器材（徒手）', basic:'哑铃+弹力带', gym:'健身房全套器械' };
@@ -2844,10 +2903,12 @@ async function callMiniMaxAPI() {
     plans.push(plan);
     savePlans();
 
+    stopAIProgress(true);
     closeAIWizard();
     showPage('plans');
 
   } catch (e) {
+    stopAIProgress(false);
     console.error('AI generation error:', e);
     const errEl = document.getElementById('aiError');
     if (errEl) {
