@@ -997,37 +997,75 @@ body {
   transition: width 0.4s ease;
   width: 12.5%;
 }
-.ai-wizard-card {
+.ai-wizard-body {
   flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 300px;
+  perspective: 800px;
+}
+.ai-wizard-card {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
   padding: 28px 24px;
   overflow-y: auto;
-  min-height: 280px;
-  /* Poker card deal animation */
-  animation: cardDeal 0.45s cubic-bezier(0.23, 1, 0.32, 1) both;
-  transform-origin: bottom center;
+  background: rgba(255,255,255,0.92);
+  border-radius: 0;
+  transform-origin: center center;
+  will-change: transform, opacity;
 }
-@keyframes cardDeal {
+.ai-wizard-card.card-enter {
+  animation: cardFlyIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.ai-wizard-card.card-exit {
+  animation: cardFlyOut 0.35s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+  pointer-events: none;
+}
+.ai-wizard-card.card-enter-back {
+  animation: cardFlyInBack 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.ai-wizard-card.card-exit-back {
+  animation: cardFlyOutBack 0.35s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+  pointer-events: none;
+}
+@keyframes cardFlyIn {
   0% {
     opacity: 0;
-    transform: translateY(80px) rotate(8deg) scale(0.85);
-  }
-  50% {
-    opacity: 1;
-    transform: translateY(-8px) rotate(-1deg) scale(1.02);
+    transform: translateX(120%) rotateY(-15deg) scale(0.8);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) rotate(0) scale(1);
+    transform: translateX(0) rotateY(0) scale(1);
   }
 }
-@keyframes cardDealOut {
+@keyframes cardFlyOut {
   0% {
     opacity: 1;
-    transform: translateY(0) rotate(0) scale(1);
+    transform: translateX(0) rotateY(0) scale(1);
   }
   100% {
     opacity: 0;
-    transform: translateY(-60px) rotate(-6deg) scale(0.9);
+    transform: translateX(-100%) rotateY(12deg) scale(0.85);
+  }
+}
+@keyframes cardFlyInBack {
+  0% {
+    opacity: 0;
+    transform: translateX(-120%) rotateY(15deg) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) rotateY(0) scale(1);
+  }
+}
+@keyframes cardFlyOutBack {
+  0% {
+    opacity: 1;
+    transform: translateX(0) rotateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%) rotateY(-12deg) scale(0.85);
   }
 }
 .ai-wizard-card h3 {
@@ -1479,8 +1517,10 @@ body {
       <div class="ai-wizard-progress">
         <div class="ai-wizard-progress-fill" id="wizardProgressFill"></div>
       </div>
-      <div class="ai-wizard-card" id="wizardCard">
-        <!-- Cards inserted dynamically -->
+      <div class="ai-wizard-body" id="wizardBody">
+        <div class="ai-wizard-card card-enter" id="wizardCard">
+          <!-- Cards inserted dynamically -->
+        </div>
       </div>
       <div class="ai-wizard-nav">
         <button class="btn btn-ghost" id="wizardPrevBtn" onclick="wizardPrev()">← 上一步</button>
@@ -2458,7 +2498,11 @@ const wizardSteps = [
 
 function startAIWizard() {
   wizardStep = 0;
+  wizardDirection = 'forward';
   wizardData = { warmup: true, intensity: 'moderate', bodyParts: [], injuries: [] };
+  // Clear any old cards
+  const body = document.getElementById('wizardBody');
+  body.innerHTML = '';
   document.getElementById('aiWizardOverlay').classList.add('active');
   renderWizardStep();
 }
@@ -2467,14 +2511,27 @@ function closeAIWizard() {
   document.getElementById('aiWizardOverlay').classList.remove('active');
 }
 
+let wizardDirection = 'forward'; // 'forward' or 'back'
+
 function renderWizardStep() {
   const step = wizardSteps[wizardStep];
-  const card = document.getElementById('wizardCard');
-  // Trigger card deal animation by re-adding it
-  card.style.animation = 'none';
-  card.offsetHeight; // force reflow
-  card.style.animation = '';
-  card.innerHTML = `<h3>${step.title}</h3><p class="wizard-subtitle">${step.subtitle}</p>${step.render()}`;
+  const body = document.getElementById('wizardBody');
+  const oldCard = body.querySelector('.ai-wizard-card');
+
+  // Fly out old card
+  if (oldCard) {
+    oldCard.id = '';
+    oldCard.className = 'ai-wizard-card ' + (wizardDirection === 'forward' ? 'card-exit' : 'card-exit-back');
+    oldCard.addEventListener('animationend', () => oldCard.remove(), { once: true });
+  }
+
+  // Create new card and fly in
+  const newCard = document.createElement('div');
+  newCard.className = 'ai-wizard-card ' + (wizardDirection === 'forward' ? 'card-enter' : 'card-enter-back');
+  newCard.id = 'wizardCard';
+  newCard.innerHTML = `<h3>${step.title}</h3><p class="wizard-subtitle">${step.subtitle}</p>${step.render()}`;
+  body.appendChild(newCard);
+
   document.getElementById('wizardProgressFill').style.width = ((wizardStep + 1) / wizardSteps.length * 100) + '%';
   document.getElementById('wizardStepLabel').textContent = `${wizardStep + 1} / ${wizardSteps.length}`;
   document.getElementById('wizardPrevBtn').style.visibility = wizardStep === 0 ? 'hidden' : 'visible';
@@ -2499,13 +2556,18 @@ function wizardNext() {
   const step = wizardSteps[wizardStep];
   if (!step.save()) {
     // Shake effect
-    document.getElementById('wizardCard').style.animation = 'none';
+    const card = document.getElementById('wizardCard');
+    card.style.animation = 'none';
     requestAnimationFrame(() => {
-      document.getElementById('wizardCard').style.animation = 'shake 0.3s ease';
+      card.style.animation = 'shake 0.3s ease';
+      setTimeout(() => {
+        card.className = 'ai-wizard-card';
+      }, 300);
     });
     return;
   }
   if (wizardStep < wizardSteps.length - 1) {
+    wizardDirection = 'forward';
     wizardStep++;
     renderWizardStep();
   }
@@ -2513,6 +2575,7 @@ function wizardNext() {
 
 function wizardPrev() {
   if (wizardStep > 0) {
+    wizardDirection = 'back';
     wizardStep--;
     renderWizardStep();
   }
