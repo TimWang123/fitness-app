@@ -963,32 +963,33 @@ body {
   display: none;
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   z-index: 500;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  overflow: hidden;
 }
 .ai-wizard-overlay.active { display: flex; }
 .ai-wizard {
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(32px) saturate(180%);
-  -webkit-backdrop-filter: blur(32px) saturate(180%);
-  border-radius: 24px;
-  padding: 0;
   max-width: 440px;
   width: 100%;
   max-height: 85vh;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.7);
-  box-shadow: 0 20px 80px rgba(0,0,0,0.2);
   display: flex;
   flex-direction: column;
+  /* Transparent container — cards carry their own styling */
+  background: none;
+  border: none;
+  box-shadow: none;
+  overflow: visible;
 }
 .ai-wizard-progress {
   height: 4px;
-  background: rgba(0,0,0,0.06);
+  background: rgba(255,255,255,0.3);
   border-radius: 2px;
+  margin-bottom: 16px;
 }
 .ai-wizard-progress-fill {
   height: 100%;
@@ -1000,17 +1001,24 @@ body {
 .ai-wizard-body {
   flex: 1;
   position: relative;
-  overflow: hidden;
-  min-height: 300px;
-  perspective: 800px;
+  overflow: visible;
+  min-height: 340px;
+  perspective: 1200px;
 }
 .ai-wizard-card {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0; left: 0; right: 0;
+  min-height: 300px;
   padding: 28px 24px;
   overflow-y: auto;
+  max-height: 60vh;
+  /* Each card is a standalone visual card */
   background: rgba(255,255,255,0.92);
-  border-radius: 0;
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.7);
+  box-shadow: 0 16px 60px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
   transform-origin: center center;
   will-change: transform, opacity;
 }
@@ -1031,41 +1039,49 @@ body {
 @keyframes cardFlyIn {
   0% {
     opacity: 0;
-    transform: translateX(120%) rotateY(-15deg) scale(0.8);
+    transform: translate3d(160%, 30px, -100px) rotateY(-25deg) rotateZ(6deg) scale(0.7);
+  }
+  60% {
+    opacity: 1;
+    transform: translate3d(-8px, -4px, 0) rotateY(3deg) rotateZ(-0.5deg) scale(1.02);
   }
   100% {
     opacity: 1;
-    transform: translateX(0) rotateY(0) scale(1);
+    transform: translate3d(0, 0, 0) rotateY(0) rotateZ(0) scale(1);
   }
 }
 @keyframes cardFlyOut {
   0% {
     opacity: 1;
-    transform: translateX(0) rotateY(0) scale(1);
+    transform: translate3d(0, 0, 0) rotateY(0) rotateZ(0) scale(1);
   }
   100% {
     opacity: 0;
-    transform: translateX(-100%) rotateY(12deg) scale(0.85);
+    transform: translate3d(-150%, 40px, -80px) rotateY(20deg) rotateZ(-8deg) scale(0.65);
   }
 }
 @keyframes cardFlyInBack {
   0% {
     opacity: 0;
-    transform: translateX(-120%) rotateY(15deg) scale(0.8);
+    transform: translate3d(-160%, 30px, -100px) rotateY(25deg) rotateZ(-6deg) scale(0.7);
+  }
+  60% {
+    opacity: 1;
+    transform: translate3d(8px, -4px, 0) rotateY(-3deg) rotateZ(0.5deg) scale(1.02);
   }
   100% {
     opacity: 1;
-    transform: translateX(0) rotateY(0) scale(1);
+    transform: translate3d(0, 0, 0) rotateY(0) rotateZ(0) scale(1);
   }
 }
 @keyframes cardFlyOutBack {
   0% {
     opacity: 1;
-    transform: translateX(0) rotateY(0) scale(1);
+    transform: translate3d(0, 0, 0) rotateY(0) rotateZ(0) scale(1);
   }
   100% {
     opacity: 0;
-    transform: translateX(100%) rotateY(-12deg) scale(0.85);
+    transform: translate3d(150%, 40px, -80px) rotateY(-20deg) rotateZ(8deg) scale(0.65);
   }
 }
 .ai-wizard-card h3 {
@@ -1081,8 +1097,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
-  border-top: 1px solid rgba(0,0,0,0.06);
+  padding: 16px 0 0;
 }
 .ai-wizard-step {
   font-size: 0.8em;
