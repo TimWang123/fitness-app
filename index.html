@@ -70,14 +70,25 @@ body {
   background: rgba(255,255,255,0.6);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  padding: 12px 20px;
+  padding: 10px 20px;
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
   border-bottom: 1px solid rgba(0,0,0,0.06);
   position: sticky;
   top: 0;
   z-index: 100;
+}
+.nav-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.nav-top-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .nav-brand {
   font-size: 1.4em;
@@ -87,9 +98,10 @@ body {
   -webkit-text-fill-color: transparent;
   cursor: pointer;
 }
-.nav-links { display: flex; gap: 8px; margin-left: auto; }
+.nav-links { display: flex; gap: 6px; width: 100%; }
 .nav-link {
-  padding: 8px 14px;
+  flex: 1;
+  padding: 8px 10px;
   border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
@@ -99,6 +111,7 @@ body {
   background: transparent;
   color: var(--text-dim);
   white-space: nowrap;
+  text-align: center;
 }
 .nav-link:hover { background: rgba(0,0,0,0.05); color: var(--text); }
 .nav-link.active {
@@ -849,10 +862,10 @@ body {
 
 /* ===== Responsive ===== */
 @media (max-width: 600px) {
-  .nav { padding: 10px 12px; gap: 8px; }
-  .nav-brand { font-size: 1.1em; white-space: nowrap; }
+  .nav { padding: 8px 12px; gap: 6px; }
+  .nav-brand { font-size: 1.05em; white-space: nowrap; }
   .nav-links { gap: 4px; }
-  .nav-link { padding: 7px 10px; font-size: 0.8em; }
+  .nav-link { padding: 7px 6px; font-size: 0.8em; }
   .nav-link span.label-text { display: none; }
 
   .page { padding: 16px 12px; }
@@ -1170,25 +1183,29 @@ body {
 
 <!-- Navigation -->
 <nav class="nav" id="mainNav">
-  <div class="nav-brand" onclick="showPage('home')">💪 <span data-i18n="app.name">天枢智元·智练</span></div>
+  <div class="nav-top-row">
+    <div class="nav-brand" onclick="showPage('home')">💪 <span data-i18n="app.name">天枢智元·智练</span></div>
+    <div class="nav-top-right">
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="zh" onclick="setLanguage('zh')">中</button>
+        <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
+        <button class="lang-btn" data-lang="es" onclick="setLanguage('es')">ES</button>
+      </div>
+      <div style="position:relative" id="userSection">
+        <div class="user-avatar-placeholder" id="userAvatar" onclick="toggleUserMenu()">?</div>
+        <div class="user-menu" id="userMenu">
+          <div id="userMenuName" style="padding:10px 14px;font-weight:700;font-size:0.9em;border-bottom:1px solid rgba(0,0,0,0.06);margin-bottom:4px"></div>
+          <button class="user-menu-item" onclick="syncToCloud()" data-i18n="user.sync">同步数据</button>
+          <button class="user-menu-item danger" onclick="signOutUser()" data-i18n="user.logout">退出登录</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="nav-links">
     <button class="nav-link active" onclick="showPage('home')">🏠 <span class="label-text" data-i18n="nav.home">首页</span></button>
     <button class="nav-link" onclick="showPage('plans')">📋 <span class="label-text" data-i18n="nav.plans">计划</span></button>
     <button class="nav-link" onclick="showPage('create')">✏️ <span class="label-text" data-i18n="nav.create">新建</span></button>
     <button class="nav-link" onclick="showPage('history')">📊 <span class="label-text" data-i18n="nav.history">记录</span></button>
-    <div class="lang-switcher">
-      <button class="lang-btn active" data-lang="zh" onclick="setLanguage('zh')">中</button>
-      <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
-      <button class="lang-btn" data-lang="es" onclick="setLanguage('es')">ES</button>
-    </div>
-    <div style="position:relative" id="userSection">
-      <div class="user-avatar-placeholder" id="userAvatar" onclick="toggleUserMenu()">?</div>
-      <div class="user-menu" id="userMenu">
-        <div id="userMenuName" style="padding:10px 14px;font-weight:700;font-size:0.9em;border-bottom:1px solid rgba(0,0,0,0.06);margin-bottom:4px"></div>
-        <button class="user-menu-item" onclick="syncToCloud()" data-i18n="user.sync">同步数据</button>
-        <button class="user-menu-item danger" onclick="signOutUser()" data-i18n="user.logout">退出登录</button>
-      </div>
-    </div>
   </div>
 </nav>
 
