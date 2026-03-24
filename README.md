@@ -57,6 +57,19 @@
 
 ## 更新日志
 
+### v13 — AI 智能定制 + 导航优化
+- 接入 MiniMax M2.7 大语言模型，AI 智能生成个性化训练计划
+- 多步卡片式问答流程：基本信息 → 经验水平 → 目标 → 器材 → 部位 → 身体状况 → 偏好
+- 卡片切换扑克牌抽出动画（旋转 + 弹性缩放）
+- 导航栏重新布局为两行：品牌名 + 语言/头像在上，页面标签在下
+- 修复手机端语言切换和登录按钮被挤出屏幕的问题
+
+### v12 — Capacitor 原生打包
+- 使用 Capacitor 打包为 Android 原生应用
+- 原生 Google 登录（通过 @capacitor-firebase/authentication）
+- Firebase 配置集成到 Android 原生层
+- 应用已上架 Google Play 内部测试
+
 ### v11 — 用户登录与云同步
 - Google 登录（Firebase Authentication）
 - 手机号 + 短信验证码登录
