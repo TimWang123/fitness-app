@@ -1002,6 +1002,33 @@ body {
   padding: 28px 24px;
   overflow-y: auto;
   min-height: 280px;
+  /* Poker card deal animation */
+  animation: cardDeal 0.45s cubic-bezier(0.23, 1, 0.32, 1) both;
+  transform-origin: bottom center;
+}
+@keyframes cardDeal {
+  0% {
+    opacity: 0;
+    transform: translateY(80px) rotate(8deg) scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-8px) rotate(-1deg) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0) scale(1);
+  }
+}
+@keyframes cardDealOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-60px) rotate(-6deg) scale(0.9);
+  }
 }
 .ai-wizard-card h3 {
   font-size: 1.3em;
@@ -2443,6 +2470,10 @@ function closeAIWizard() {
 function renderWizardStep() {
   const step = wizardSteps[wizardStep];
   const card = document.getElementById('wizardCard');
+  // Trigger card deal animation by re-adding it
+  card.style.animation = 'none';
+  card.offsetHeight; // force reflow
+  card.style.animation = '';
   card.innerHTML = `<h3>${step.title}</h3><p class="wizard-subtitle">${step.subtitle}</p>${step.render()}`;
   document.getElementById('wizardProgressFill').style.width = ((wizardStep + 1) / wizardSteps.length * 100) + '%';
   document.getElementById('wizardStepLabel').textContent = `${wizardStep + 1} / ${wizardSteps.length}`;
@@ -2553,14 +2584,14 @@ async function callMiniMaxAPI() {
 6. 只返回JSON，不要有其他任何内容`;
 
   try {
-    const response = await fetch('https://api.minimax.chat/v1/text/chatcompletion_v2', {
+    const response = await fetch('https://api.minimaxi.com/v1/text/chatcompletion_v2', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + MINIMAX_API_KEY
       },
       body: JSON.stringify({
-        model: 'MiniMax-M2-7',
+        model: 'MiniMax-M2.7',
         messages: [
           { role: 'system', content: '你是一位专业健身教练，只输出JSON格式的训练计划，不输出任何其他内容。' },
           { role: 'user', content: prompt }
@@ -2570,10 +2601,15 @@ async function callMiniMaxAPI() {
       })
     });
 
-    if (!response.ok) throw new Error('API请求失败: ' + response.status);
+    const responseText = await response.text();
+    console.log('MiniMax API status:', response.status, 'response:', responseText.substring(0, 500));
 
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content || '';
+    if (!response.ok) throw new Error('API请求失败(' + response.status + '): ' + responseText.substring(0, 200));
+    if (!responseText) throw new Error('API返回空响应，可能是CORS限制');
+
+    const data = JSON.parse(responseText);
+    const content = data.choices?.[0]?.message?.content || data.reply || '';
+    if (!content) throw new Error('API未返回内容: ' + responseText.substring(0, 200));
 
     // Extract JSON from response (handle possible markdown code blocks)
     let jsonStr = content.trim();
